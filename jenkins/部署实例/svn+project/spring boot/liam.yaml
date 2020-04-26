@@ -1,0 +1,31 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: liam
+  namespace: cao
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        run: liam
+    spec:
+      containers:
+      - name: liam
+        image: 192.168.240.73/test/liam:2019-06-10-17-19
+        ports:
+        - containerPort: 8090
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: liam
+  namespace: cao
+spec:
+  selector:
+    run: liam
+  type: NodePort
+  ports:
+  - nodePort: 30011
+    port: 8090
+    targetPort: 8090

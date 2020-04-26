@@ -1,0 +1,31 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: suede
+  namespace: cao
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        run: suede
+    spec:
+      containers:
+      - name: suede
+        image: 192.168.240.73/test/suede:2019-05-15-13-52
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: suede
+  namespace: cao
+spec:
+  selector:
+    run: suede
+  type: NodePort
+  ports:
+  - nodePort: 30003
+    port: 8080
+    targetPort: 8080

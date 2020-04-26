@@ -1,0 +1,66 @@
+## prometheus-operator/values.yaml
+alertmanager:
+  service:
+    nodePort: 30000
+    type: NodePort
+  alertmanagerSpec:
+    image:
+      repository: reg01.sky-mobi.com/k8s/quay.io/prometheus/alertmanager
+      tag: v0.16.1
+prometheusOperator:
+  image:
+    repository: reg01.sky-mobi.com/k8s/quay.io/coreos/prometheus-operator
+    tag: v0.29.0
+    pullPolicy: IfNotPresent
+  configmapReloadImage:
+    repository: reg01.sky-mobi.com/k8s/quay.io/coreos/configmap-reload
+    tag: v0.0.1
+  prometheusConfigReloaderImage:
+    repository: reg01.sky-mobi.com/k8s/quay.io/coreos/prometheus-config-reloader
+    tag: v0.29.0
+  hyperkubeImage:
+    repository: reg01.sky-mobi.com/k8s/k8s.gcr.io/hyperkube
+    tag: v1.12.1
+    pullPolicy: IfNotPresent
+prometheus:
+  service:
+    nodePort: 30001
+    type: NodePort
+  prometheusSpec:
+    image:
+      repository: reg01.sky-mobi.com/k8s/quay.io/prometheus/prometheus
+      tag: v2.7.1
+    secrets: [etcd-client-cert]
+kubeEtcd:
+  serviceMonitor:
+    scheme: https
+    insecureSkipVerify: false
+    serverName: ""
+    caFile: /etc/prometheus/secrets/etcd-client-cert/ca.crt
+    certFile: /etc/prometheus/secrets/etcd-client-cert/healthcheck-client.crt
+    keyFile: /etc/prometheus/secrets/etcd-client-cert/healthcheck-client.key
+
+
+## prometheus-operator/charts/grafana/values.yaml
+grafana:
+  service:
+    nodePort: 30002
+    type: NodePort
+  image:
+    repository: reg01.sky-mobi.com/k8s/grafana/grafana
+    tag: 6.0.2
+  sidecar:
+    image: reg01.sky-mobi.com/k8s/kiwigrid/k8s-sidecar:0.0.13
+
+## prometheus-operator/charts/kube-state-metrics/values.yaml
+kube-state-metrics:
+  image:
+    repository: reg01.sky-mobi.com/k8s/k8s.gcr.io/kube-state-metrics
+    tag: v1.5.0
+
+
+## prometheus-operator/charts/prometheus-node-exporter/values.yaml
+prometheus-node-exporter:
+  image:
+    repository: reg01.sky-mobi.com/k8s/quay.io/prometheus/node-exporter
+    tag: v0.17.0

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluentd
+  labels:
+    k8s-app: fluentd
+spec:
+  selector:
+    matchLabels:
+      name: fluentd
+  template:
+    metadata:
+      labels:
+        name: fluentd
+    spec:
+      containers:
+      - name: fluentd-es
+        image: fluent/fluentd:v1.4-1
+        env:
+         - name: FLUENTD_ARGS
+           value: -qq
+        volumeMounts:
+         - name: containers
+           mountPath: /var/lib/docker/containers
+         - name: varlog
+           mountPath: /varlog
+      volumes:
+         - hostPath:
+             path: /var/lib/docker/containers
+           name: containers
+         - hostPath:
+             path: /var/log
+           name: varlog

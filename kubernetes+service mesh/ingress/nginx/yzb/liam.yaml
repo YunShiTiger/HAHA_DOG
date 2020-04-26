@@ -1,0 +1,30 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: liam
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: liam-ingress
+    spec:
+      containers:
+      - name: liam-ingress
+        image: 192.168.240.73/test/fuckworld:2019-06-12-10-59
+        ports:
+        - name: httpd
+          containerPort: 8090
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: liam-ingress
+spec:
+  selector:
+    run: liam-ingress
+  type: NodePort
+  ports:
+  - name: httpd
+    port: 8090
+    targetPort: 8090

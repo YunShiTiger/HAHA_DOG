@@ -1,0 +1,6 @@
+select zh_TASK.ZHIXINGRJH,zh_TASK.LRSJ, zh_UNKNOWWHERE.*
+from zh_TASK,zh_UNKNOWWHERE
+where zh_TASK.AUTOORIGINUUID = zh_UNKNOWWHERE.UUID
+and zh_TASK.LRSJ>:latest
+and rownum<1000
+order by zh_TASK.LRSJ

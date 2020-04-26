@@ -1,0 +1,535 @@
+# Ceph安装
+
+## 准备工作
+
+### 'vi /etc/hosts'
+
+加入
+
+```
+192.168.1.121 k8s
+```
+
+### 'vi /etc/hostname'
+
+改为
+
+```
+k8s
+```
+
+### 更新yum源
+
+```
+wget  -O  /etc/yum.repos.d/epel.repo http://mirrors.aliyun.com/repo/epel-7.repo
+```
+
+#### 配置Ceph的yum源
+
+```
+vim  /etc/yum.repos.d/ceph.repo
+```
+
+```
+[ceph]
+name=ceph
+baseurl=http://mirrors.aliyun.com/ceph/rpm-jewel/el7/x86_64/
+gpgcheck=0
+priority=1
+
+[ceph-noarch]
+name=cephnoarch
+baseurl=http://mirrors.aliyun.com/ceph/rpm-jewel/el7/noarch/
+gpgcheck=0
+priority=1
+
+[ceph-source]
+name=Ceph source packages
+baseurl=http://mirrors.163.com/ceph/rpm-jewel/el7/SRPMS
+enabled=0
+gpgcheck=1
+type=rpm-md
+gpgkey=http://mirrors.163.com/ceph/keys/release.asc
+priority=1
+```
+
+#### `yum makecache `
+
+#### `yum update `
+
+### 关闭防火墙
+
+```
+systemctl disable firewalld
+```
+
+验证
+
+```
+service firewalld status
+打印出dead为成功
+```
+
+### 关闭selinux
+
+```
+vi /etc/selinux/config
+```
+
+```
+将SELINUX=enforcing 改为SELINUX=disabled
+```
+
+验证
+
+```
+getenforce
+打印出disabled为修改成功
+```
+
+
+
+## 安装ceph 
+
+```
+yum install  -y  ceph
+```
+
+### 验证(查看版本)
+
+```
+ceph -v
+```
+
+
+
+## 安装ntp服务器 
+
+为保证各个服务器的时间一致，安装ntp服务器 
+
+```
+yum install -y ntp ntpdate ntp-doc
+```
+
+访问：<http://www.pool.ntp.org/zone/cn> 
+
+### 编辑`/etc/ntp.conf `
+
+文中
+
+```
+server 0.cn.pool.ntp.org
+server 1.cn.pool.ntp.org
+server 2.cn.pool.ntp.org
+server 3.cn.pool.ntp.org
+```
+
+替换为
+
+```
+server 0.cn.pool.ntp.org 
+server 1.asia.pool.ntp.org 
+server 2.asia.pool.ntp.org
+```
+
+### 服务器同步并启动ntp服务 
+
+```
+ntpdate 0.cn.pool.ntp.org
+hwclock -w
+systemctl enable ntpd.service
+systemctl start ntpd.service
+```
+
+
+
+## 安装ssh服务
+
+```
+yum install openssh-server
+```
+
+### 生成ssh密钥对并复制到各节点 
+
+```
+ssh-keygen
+一路回车
+```
+
+### 复制公钥到各服务器
+
+```
+ssh-copy-id -i ~/.ssh/id_rsa.pub root@k8s
+```
+
+
+
+## 安装部署工具ceph-deploy 
+
+```
+yum install ceph-deploy -y
+```
+
+### 验证(查看版本)
+
+```
+ceph-deploy  --version 
+```
+
+
+
+## 创建集群
+
+### 创建目录
+
+```
+mkdir /home/my-cluster
+```
+
+### 进入目录
+
+```
+cd my-cluster
+```
+
+### 部署monitor节点
+
+```
+ceph-deploy new k8s
+```
+
+查看my-cluster目录下生成的文件：
+
+```
+# ls 
+ceph.conf  ceph-deploy-ceph.log  ceph.mon.keyring
+```
+
+### 修改配置文件
+
+```
+vim ceph.conf
+```
+
+#### 例:
+
+```
+[global]
+mon_initial_members = e1092, e1093, e1094
+mon_host = 10.0.1.92,10.0.1.93,10.0.1.94
+auth_cluster_required = none
+auth_service_required = none
+auth_client_required = none
+osd pool default size = 1
+public network = 10.0.1.0/24
+```
+
+#### 说明:
+
+```
+前面5项是自动生成的，不过我修改了auth_cluster_required，auth_service_required，auth_client_required为none，原始默认是cephx，表示要通过认证，这里我不需要认证，所以设为none。 
+osd pool default size是副本的个数，我只配置两个副本，所以设为2. 
+public network是公共网络，是osd之间通信的网络，该项建议设置，如果不设置，后面可能执行命令的时候有警告信息，该参数其实就是你的mon节点IP最后一项改为0,然后加上/24。例如我的节点ip是10.0.1.8*系列的，所以我的public network就是10.0.1.0/24。 
+部署monitors,并获取密钥key，此命令会在my-cluster目录下生成几个key
+```
+
+#### 或:
+
+```
+[global]
+fsid = 81449318-10ba-46a0-b5b3-6f6ceb9465de
+mon_initial_members = k8s
+mon_host = 192.168.1.121
+auth_cluster_required = none
+auth_service_required = none
+auth_client_required = none
+osd pool default size = 1
+public network = 192.168.1.0/24
+```
+
+### 初始化集群
+
+```
+ceph-deploy  --overwrite-conf mon  create-initial
+```
+
+my-cluster目录下生成的文件：
+
+```
+# ls
+ceph.bootstrap-mds.keyring 
+ceph.bootstrap-rgw.keyring  
+ceph.conf             
+ceph.mon.keyring
+ceph.bootstrap-osd.keyring  
+ceph.client.admin.keyring   
+ceph-deploy-ceph.log
+```
+
+
+
+## 部署osd: 
+
+### 创建osd
+
+使用磁盘或者文件夹都可以
+
+```
+mkdir  /var/local/osd1  
+chmod  777  -R  /var/local/osd1
+```
+
+### 准备osd
+
+```
+ceph-deploy osd prepare k8s:/var/local/osd1
+```
+
+### 激活osd
+
+```
+ceph-deploy osd activate k8s:/var/local/osd1
+```
+
+
+
+## 验证
+
+### 状态
+
+```
+ceph status
+```
+
+```
+cluster 121f8c78-fa2e-4421-a21d-f0a7498074f1
+health HEALTH_OK
+```
+
+### 健康
+
+```
+ceph health
+```
+
+
+
+# 挂载
+
+Ceph 文件系统，你必须先装起至少带一个 Ceph 元数据服务器的 Ceph 存储集群。 
+
+## 进入ceph配置集群目录`cd my-cluster`
+
+## 创建mds
+
+```
+ceph-deploy mds create k8s
+只让k8s节点成为mds的角色
+```
+
+如果有多个可以写成`ceph-deploy mds create ceph-node1 ceph-node2 ceph-node3 `
+
+## 创建CephFS 
+
+1、但是当前一套集群只能有一个文件系统存在。         
+
+2、一个 Ceph 文件系统需要至少两个 RADOS 存储池，一个用于数据、一个用于元数据。配置这些存储池时需考虑：            
+
+​	2.1 为元数据存储池设置较高的副本水平，因为此存储池丢失任何数据都会导致整个文件系统失效。
+
+​	2.2 为元数据存储池分配低延时存储器（像 SSD ），因为它会直接影响到客户端的操作延时。  
+
+### 创建存储池
+
+#### 创建存储数据的存储池，128是PG数量 
+
+```
+ceph osd pool create cephfs_data 128
+```
+
+#### 创建存储元数据的存储池
+
+```
+ceph osd pool create cephfs_metadata 128
+```
+
+#### 查看池
+
+```
+ceph osd lspools
+```
+
+### 注解
+
+```
+确定 pg_num 取值是强制性的，因为不能自动计算。下面是几个常用的值：
+*少于 5 个 OSD 时可把 pg_num 设置为 128
+*OSD 数量在 5 到 10 个时，可把 pg_num 设置为 512
+*OSD 数量在 10 到 50 个时，可把 pg_num 设置为 4096
+*OSD 数量大于 50 时，你得理解权衡方法、以及如何自己计算 pg_num 取值
+*自己计算 pg_num 取值时可借助 pgcalc 工具
+随着 OSD 数量的增加，正确的 pg_num 取值变得更加重要，因为它显著地影响着集群的行为、以及出错时的数据持久性（即灾难性事件导致数据丢失的概率）。
+```
+
+### 创建文件系统
+
+```
+ceph fs new k8scephfs cephfs_metadata cephfs_data
+```
+
+注:`k8scephfs`为文件系统名称
+
+#### 验证(查看创建后的cephfs)
+
+```
+ceph fs ls
+```
+
+#### 查看mds节点状态
+
+```
+ceph mds stat
+```
+
+文件系统创建完毕后，MDS 服务器就能达到 active 状态了。
+
+比如在一个单 MDS 系统中，建好文件系统且 MDS 活跃后，你就可以挂载此文件系统了 。
+
+## 使用内核驱动程序挂载CephFs
+
+### 创建挂载点目录
+
+```
+mkdir /k8scephfs
+```
+
+### 查看管理员秘钥
+
+因为要挂载启用了 cephx 认证的 Ceph 文件系统，所以必须指定用户名、密钥。
+
+### ` cd /etc/ceph/ `
+
+### `cat ceph.client.admin.keyring  `
+
+### 打印出
+
+```
+[client.admin]
+	key = AQBQfuJb+NhwBBAAGR+hN1C/VlDQbuAgcOV9ew==
+```
+
+这个就是管理员的秘钥，等会挂载的时候用得上。
+
+### 使用linux的mount命令挂载cephfs
+
+```
+mount -t ceph 192.168.1.103:6789:/ /k8scephfs -o name=admin,secret=AQBQfuJb+NhwBBAAGR+hN1C/VlDQbuAgcOV9ew==
+```
+
+### 用`df -h`命令查看挂载情况
+
+```
+文件系统                 容量  已用  可用 已用% 挂载点
+/dev/mapper/centos-root  643G  4.3G  639G    1% /
+devtmpfs                  16G     0   16G    0% /dev
+tmpfs                     16G     0   16G    0% /dev/shm
+tmpfs                     16G   18M   16G    1% /run
+tmpfs                     16G     0   16G    0% /sys/fs/cgroup
+/dev/sda2                 19G  215M   19G    2% /boot
+/dev/mapper/centos-home  512G   37M  512G    1% /home
+/dev/mapper/centos-var   652G  5.9G  646G    1% /var
+tmpfs                    3.2G   16K  3.2G    1% /run/user/42
+tmpfs                    3.2G     0  3.2G    0% /run/user/0
+192.168.1.103:6789:/     652G  5.9G  646G    1% /k8scephfs
+```
+
+### 安全的方式挂载
+
+由于直接mount会把密码遗留在 Bash 历史里，更安全的方法是从文件读密码。
+
+将admin的秘钥保存到文件里
+
+```
+echo "AQBQfuJb+NhwBBAAGR+hN1C/VlDQbuAgcOV9ew==" > /etc/ceph/admin.secret
+```
+
+```
+mount -t ceph 192.168.1.103:6789:/ /k8scephfs -o name=admin,secretfile=/etc/ceph/admin.secret
+```
+
+### 开机挂载
+
+在fstab中加入vi `/etc/fstab`
+
+```
+192.168.1.103:6789:/ /k8scephfs ceph name=admin,secretfile=/etc/ceph/admin.secret,noatime,_netdev    0       2
+```
+
+
+
+## 卸载CephFs
+
+```
+umount /k8scephfs
+```
+
+再`df-h`发现就没有挂载了
+
+
+
+
+
+# 实例:
+
+```
+http://blog.51cto.com/freshair/2059383
+```
+
+
+
+# 报错调试
+
+## HEALTH_WARN too many PGs per OSD (320 > max 300)
+
+`cd /my-cluster` && `vim ceph.conf`
+
+添加
+
+```
+mon_pg_warn_max_per_osd = 1024
+```
+
+重载配置
+
+```
+ceph-deploy --overwrite-conf config push k8s
+```
+
+重启服务
+
+```
+systemctl restart ceph-mon.target
+```
+
+查看
+
+```
+ceph --show-config  | grep mon_pg_warn_max_per_osd
+```
+
+
+
+
+
+
+
+# 卸载Ceph
+
+```
+https://www.cnblogs.com/nulige/articles/8475907.html
+```
+
+
+
+
+

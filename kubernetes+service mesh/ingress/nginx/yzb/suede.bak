@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: suede-ingress
+  #namespace: yzb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: suede-ingress
+      release: zzz
+  template:
+    metadata:
+      labels:
+        app: suede-ingress
+        release: zzz
+    spec:
+      containers:
+      - name: suede-ingress
+        image: 192.168.240.73/test/rapeworld:2019-07-04-17-44
+        ports:
+        - name: httpd 
+          containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: suede-ingress
+  #namespace: yzb
+spec:
+  selector:
+    app: suede-ingress
+    release: zzz
+  ports:
+  - name: httpd
+    port: 8080
+    targetPort: 8080

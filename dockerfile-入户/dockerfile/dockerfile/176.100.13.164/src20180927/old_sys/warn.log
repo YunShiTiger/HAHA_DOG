@@ -1,0 +1,45 @@
+2017-09-19 15:27:09  [ main:5001 ] - [ WARN ]  read file fail:sanhui_ydl.sql
+2017-09-19 15:27:09  [ main:5001 ] - [ WARN ]  read file fail:sanhui_913.sql
+2017-09-19 15:27:09  [ main:5002 ] - [ WARN ]  read file fail:sanhui_missing.sql
+2017-09-19 15:27:48  [ pool-2-thread-1:43933 ] - [ FATAL ]  process sync file fail:
+java.util.zip.ZipException: invalid stored block lengths
+	at java.util.zip.InflaterInputStream.read(InflaterInputStream.java:164)
+	at java.util.zip.ZipInputStream.read(ZipInputStream.java:194)
+	at java.io.FilterInputStream.read(FilterInputStream.java:107)
+	at com.inspeeding.process.ProceeZipData.processGrxx(ProceeZipData.java:80)
+	at com.inspeeding.process.ProceeZipData.run(ProceeZipData.java:54)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+2017-09-19 19:23:15  [ main:5002 ] - [ WARN ]  read file fail:sanhui_ydl.sql
+2017-09-19 19:23:15  [ main:5003 ] - [ WARN ]  read file fail:sanhui_913.sql
+2017-09-19 19:23:15  [ main:5003 ] - [ WARN ]  read file fail:sanhui_missing.sql
+2017-09-19 19:23:35  [ pool-4-thread-2:25114 ] - [ WARN ]  process gps file success!!!
+2017-09-19 19:23:35  [ pool-4-thread-1:25115 ] - [ WARN ]  process gps file success!!!
+2017-09-19 19:24:00  [ main:5002 ] - [ WARN ]  read file fail:sanhui_ydl.sql
+2017-09-19 19:24:00  [ main:5002 ] - [ WARN ]  read file fail:sanhui_913.sql
+2017-09-19 19:24:00  [ main:5002 ] - [ WARN ]  read file fail:sanhui_missing.sql
+2017-09-19 19:27:11  [ main:5002 ] - [ WARN ]  read file fail:sanhui_ydl.sql
+2017-09-19 19:27:11  [ main:5002 ] - [ WARN ]  read file fail:sanhui_913.sql
+2017-09-19 19:27:11  [ main:5002 ] - [ WARN ]  read file fail:sanhui_missing.sql
+2017-09-19 19:27:39  [ pool-4-thread-1:32461 ] - [ WARN ]  process gps file success!!!
+2017-09-19 19:28:00  [ pool-4-thread-2:53332 ] - [ WARN ]  process gps file success!!!
+2017-09-19 19:28:00  [ pool-4-thread-3:53336 ] - [ WARN ]  process gps file success!!!
+2017-09-19 19:29:50  [ pool-1-thread-2:163834 ] - [ WARN ]  调用身份信息失败！！
+2017-09-19 19:30:40  [ pool-4-thread-4:213663 ] - [ WARN ]  process gps file success!!!
+2017-09-19 19:32:59  [ pool-4-thread-5:352939 ] - [ WARN ]  process gps file success!!!
+2017-09-19 19:33:59  [ pool-4-thread-1:413057 ] - [ WARN ]  process gps file success!!!
+2017-09-19 19:35:40  [ pool-4-thread-2:513256 ] - [ WARN ]  process gps file success!!!
+2017-09-19 19:38:00  [ pool-4-thread-4:653526 ] - [ WARN ]  process gps file success!!!
+2017-09-19 19:38:00  [ pool-4-thread-3:653527 ] - [ WARN ]  process gps file success!!!
+2017-09-19 19:40:40  [ pool-4-thread-5:813837 ] - [ WARN ]  process gps file success!!!
+2017-09-19 19:40:40  [ pool-4-thread-1:813838 ] - [ WARN ]  process gps file success!!!
+2017-10-20 05:57:17  [ main:5002 ] - [ WARN ]  read file fail:sanhui_ydl.sql
+2017-10-20 05:57:17  [ main:5003 ] - [ WARN ]  read file fail:sanhui_913.sql
+2017-10-20 05:57:17  [ main:5003 ] - [ WARN ]  read file fail:sanhui_missing.sql
+2017-10-20 05:58:42  [ main:5001 ] - [ WARN ]  read file fail:sanhui_ydl.sql
+2017-10-20 05:58:42  [ main:5002 ] - [ WARN ]  read file fail:sanhui_913.sql
+2017-10-20 05:58:42  [ main:5002 ] - [ WARN ]  read file fail:sanhui_missing.sql
+2017-10-20 05:59:49  [ main:5002 ] - [ WARN ]  read file fail:sanhui_ydl.sql
+2017-10-20 05:59:49  [ main:5003 ] - [ WARN ]  read file fail:sanhui_913.sql
+2017-10-20 05:59:49  [ main:5003 ] - [ WARN ]  read file fail:sanhui_missing.sql

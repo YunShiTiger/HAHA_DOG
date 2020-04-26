@@ -1,0 +1,6 @@
+docker run -dt --name redis-1 --restart unless-stopped --net host -v /root/deploy/redis/redis-1/redis.conf:/etc/redis/redis.conf redis redis-server /etc/redis/redis.conf --appendonly yes
+docker run -dt --name redis-2 --restart unless-stopped --net host -v /root/deploy/redis/redis-2/redis.conf:/etc/redis/redis.conf redis redis-server /etc/redis/redis.conf --appendonly yes
+docker run -dt --name redis-3 --restart unless-stopped --net host -v /root/deploy/redis/redis-3/redis.conf:/etc/redis/redis.conf redis redis-server /etc/redis/redis.conf --appendonly yes
+docker run -dt --name redis-4 --restart unless-stopped --net host -v /root/deploy/redis/redis-4/redis.conf:/etc/redis/redis.conf redis redis-server /etc/redis/redis.conf --appendonly yes
+docker run -dt --name redis-5 --restart unless-stopped --net host -v /root/deploy/redis/redis-5/redis.conf:/etc/redis/redis.conf redis redis-server /etc/redis/redis.conf --appendonly yes
+docker run -dt --name redis-6 --restart unless-stopped --net host -v /root/deploy/redis/redis-6/redis.conf:/etc/redis/redis.conf redis redis-server /etc/redis/redis.conf --appendonly yes

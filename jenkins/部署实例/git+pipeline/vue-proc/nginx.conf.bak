@@ -1,0 +1,27 @@
+server {
+    listen       8082;
+    server_name  localhost;
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+    }
+    location ^~/system/ {
+        rewrite ^/(.*)$ /$1 break;
+        #proxy_set_header   Host             $host;
+        #proxy_set_header   x-forwarded-for  $remote_addr;
+        #proxy_set_header   X-Real-IP        $remote_addr;
+        proxy_pass http://218.84.186.2:30013/system/;
+    }
+    location ^~/yq/ {
+        rewrite ^/(.*)$ /$1 break;
+        #proxy_set_header   Host             $host;
+        #proxy_set_header   x-forwarded-for  $remote_addr;
+        #proxy_set_header   X-Real-IP        $remote_addr;
+        proxy_pass http://218.84.186.2:30014/yq/;
+    }
+
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}

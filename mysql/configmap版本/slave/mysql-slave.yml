@@ -1,0 +1,60 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: mysql-slave
+spec:
+  serviceName: mysql-slave-service
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: mysql-slave
+    spec:
+      containers:
+      - name: mysql-slave
+        image: 192.168.240.73/fuck/mysql:slave
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "123456"
+        - name: MYSQL_REPLICATION_USER
+          value: "repl"
+        - name: MYSQL_REPLICATION_PASSWORD
+          value: "123456"
+        - name: MAX_CONNECTIONS
+          value: "10000"
+        volumeMounts:
+          - name: mysql-slave-data
+            mountPath: /var/lib/mysql
+          - name: mysql-slave-conf
+            mountPath: /etc/mysql/mysql.conf.d/
+      volumes:
+      - name: mysql-slave-conf
+        configMap:
+          name: mysql-slave-conf
+          items:
+            - key: "mysqld.cnf"
+              path: "mysqld.cnf"
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-slave-data
+    spec: 
+      accessModes: [ "ReadWriteMany" ]
+      resources:
+        requests:
+          storage: 50G
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-slave
+spec:
+  selector:
+    app: mysql-slave
+  type: NodePort
+  ports:
+  - nodePort: 30307
+    port: 3306
+    targetPort: 3306
+

@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-data-redis-app-0
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeName: redis-pv1
+  storageClassName: redis
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-data-redis-app-1
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeName: redis-pv2
+  storageClassName: redis
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-data-redis-app-2
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeName: redis-pv3
+  storageClassName: redis
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-data-redis-app-3
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeName: redis-pv4
+  storageClassName: redis
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-data-redis-app-4
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeName: redis-pv5
+  storageClassName: redis
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-data-redis-app-5
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeName: redis-pv6
+  storageClassName: redis
+  resources:
+    requests:
+      storage: 1Gi
+---

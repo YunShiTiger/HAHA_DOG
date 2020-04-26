@@ -1,0 +1,11 @@
+version: '2'
+services:
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.6.2
+    environment:
+      SERVER_NAME: kibana
+      ELASTICSEARCH_HOSTS: http://192.168.240.73:10000
+    ports:
+      - 10001:5601
+    volumes:
+      - /root/fuck/KIBANA/kibana.yml:/usr/share/kibana/config/kibana.yml

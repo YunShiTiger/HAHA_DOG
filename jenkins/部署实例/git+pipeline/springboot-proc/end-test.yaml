@@ -1,0 +1,29 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: liam
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        run: liam
+    spec:
+      containers:
+        - name: liam
+          image: 192.168.100.7/bzyq/end-test:2019-07-15-18-26
+          ports:
+            - containerPort: 8090
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: liam
+spec:
+  selector:
+    run: liam
+  type: NodePort
+  ports:
+    - nodePort: 30010
+      port: 8090
+      targetPort: 8090

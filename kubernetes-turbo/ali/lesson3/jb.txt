@@ -1,0 +1,75 @@
+Kubernetes-Turbo
+
+minikube
+
+查看状态
+
+    minikube status
+
+打印
+
+    host: Running
+    kubelet: Running
+    apiserver: Running
+    kubectl: Correctly Configured: pointing to minikube-vm at 10.211.55.6
+
+动态查看
+
+    kubectl get --watch deployment
+
+    --watch
+    #该参数类似于shell的tail
+
+查看labels
+
+搜索所有
+
+    kubectl get pods --show-labels
+
+    --show-labels
+    #该参数查看所设的selector
+
+增加搜索条件
+
+    kubectl get pods --show-labels -l app=nginx,env=test
+
+    #后面-l参数增加检索内容 多个用","隔开并且为并集
+
+w
+
+查看pods配置
+
+    kubectl get pod nginx-deployment-54f57cf6bf-g9kbz -o yaml
+    
+
+    -o yaml
+    #该方式输出其yaml格式配置文件
+    
+
+
+
+修改label
+
+添加/修改
+
+    kubectl label pod nginx-deployment-54f57cf6bf-g9kbz env=aaa --overwrite
+    
+    
+
+    #可以修改deployment这类controller也可以修改pods
+    #若添加的label没有则为添加,若有则为修改
+    
+    
+
+删除
+
+    kubectl label pod nginx-deployment-54f57cf6bf-g9kbz env-
+    
+
+    #删除label则为最后为label标签,不用写"="和":"直接写"-"即可
+    
+
+
+
+
+

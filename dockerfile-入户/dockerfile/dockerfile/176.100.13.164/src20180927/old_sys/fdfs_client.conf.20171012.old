@@ -1,0 +1,59 @@
+connect_timeout = 2
+network_timeout = 30
+charset = ISO8859-1
+http.tracker_http_port = 80
+http.anti_steal_token = no
+http.secret_key = FastDFS1234567890
+tracker_server = 10.31.185.235:22522
+
+#######################################
+ftpAddress=10.144.113.52
+ftpPort=21
+ftpUser=ryxx
+ftpPassword=ryxx
+ftpPath=/out2in/
+ftpUserRet=ryxx
+ftpPasswordRet=ryxx
+ftpPathRet=/in2out/
+
+###########################################
+
+new_ftpAddress=192.168.10.252
+new_ftpPort=21
+
+######################################
+
+dbUrl=jdbc:oracle:thin:@47.93.78.222:1521/pdborcl
+dbDrive=oracle.jdbc.driver.OracleDriver
+dbUser=ryxx
+dbPassword=ryxx
+#######################################
+
+redisAddress=10.144.113.52
+redisPort=26379
+clusterName=mymaster
+password=sibosen
+redisSentinel=10.144.113.52:26379
+
+############
+idnumUrl=http://60.205.152.113/1.json
+idnumPicUrl=http://60.205.152.113/1.json
+
+##################
+fdfsUrl=http://10.80.49.222:80/
+fdfsUrl2=http://176.100.13.240:8082/
+
+#################
+gpsPeriod=10
+
+################发送短信号码,多个用英文","隔开
+
+phones=18612670895
+
+################TCP调用地址(向APP推送内网处理反馈结果)
+
+tcpUrl=http://10.80.49.222:80/1/push
+
+
+
+

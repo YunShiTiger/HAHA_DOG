@@ -1,0 +1,58 @@
+connect_timeout = 2
+network_timeout = 30
+charset = ISO8859-1
+http.tracker_http_port = 80
+http.anti_steal_token = no
+http.secret_key = FastDFS1234567890
+tracker_server = 176.100.13.164:22522
+tracker_server = 176.100.13.164:22622
+tracker_server = 176.100.13.165:22522
+tracker_server = 176.100.13.165:22622
+
+#######################################
+
+ftpAddress=192.168.30.57
+ftpPort=21
+ftpUser=ryxx
+ftpPassword=ryxx
+ftpUserRet=ryxx
+ftpPasswordRet=ryxx
+ftpPath=/out2in/
+ftpPathRet=/in2out/
+
+###########################################
+
+new_ftpAddress=192.168.10.252
+new_ftpPort=21
+
+######################################
+dbDrive=oracle.jdbc.driver.OracleDriver
+dbUser=ryxx
+dbPassword=ryxx
+dbUrl=jdbc:oracle:thin:@47.93.78.222:1521/pdborcl
+
+#######################################
+redisAddress=176.100.13.172
+redisPort=6379
+clusterName=mymaster
+password=inspeeding
+redisSentinel=176.100.13.172:26379,176.100.13.160:26379
+############
+idnumUrl=http://60.205.152.113/1.json
+idnumPicUrl=http://60.205.152.113/1.json
+
+##################
+fdfsUrl=http://176.100.13.160:80/
+fdfsUrl2=http://176.100.13.160:80/
+
+#################
+gpsPeriod=20
+
+################发送短信号码,多个用英文","隔开
+phones=15522576069
+################TCP调用地址(向APP推送内网处理反馈结果)
+tcpUrl=http://192.168.30.72/1/push
+
+
+
+

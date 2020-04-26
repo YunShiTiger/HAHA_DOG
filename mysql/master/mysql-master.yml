@@ -1,0 +1,49 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: mysql-master
+spec:
+  serviceName: mysql-master-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysql-master
+    spec:
+      containers:
+      - name: mysql-masterr
+        image: registry.cn-qingdao.aliyuncs.com/caonima/mysql:master 
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "123456"
+        - name: MYSQL_REPLICATION_USER
+          value: "repl"
+        - name: MYSQL_REPLICATION_PASSWORD
+          value: "123456"
+        volumeMounts:
+          - name: mysql-master-data
+            mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-master-data
+    spec: 
+      accessModes: [ "ReadWriteMany" ]
+      resources:
+        requests:
+          storage: 30G
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-master
+spec:
+  selector:
+    app: mysql-master
+  type: NodePort
+  ports:
+  - nodePort: 31521
+    port: 3306
+    targetPort: 3306
+

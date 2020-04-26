@@ -1,0 +1,40 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: dl-connect
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        run: dl-connect
+    spec:
+      containers:
+      - name: dl-connect
+        image: 192.168.188.77:5000/nginx:k8s
+        ports:
+        - containerPort: 31001
+        volumeMounts:
+        - name: "dl-connect-conf"
+          mountPath: "/etc/nginx/conf.d/"
+      volumes:
+      - name: "dl-connect-conf"
+        configMap:
+          name: "dl-connect-conf"
+          items:  
+            - key: "nginx.conf"
+              path: "nginx.conf"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dl-connect
+spec:
+  selector:
+    run: dl-connect
+  type: NodePort
+  ports:
+  - nodePort: 31001
+    port: 31001
+    targetPort: 31001

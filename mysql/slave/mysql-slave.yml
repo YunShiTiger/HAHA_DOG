@@ -1,0 +1,49 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: mysql-slave
+spec:
+  serviceName: mysql-slave-service
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: mysql-slave
+    spec:
+      containers:
+      - name: mysql-slave
+        image: registry.cn-qingdao.aliyuncs.com/caonima/mysql:slave
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "123456"
+        - name: MYSQL_REPLICATION_USER
+          value: "repl"
+        - name: MYSQL_REPLICATION_PASSWORD
+          value: "123456"
+        volumeMounts:
+          - name: mysql-slave-data
+            mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-slave-data
+    spec: 
+      accessModes: [ "ReadWriteMany" ]
+      resources:
+        requests:
+          storage: 30G
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-slave
+spec:
+  selector:
+    app: mysql-slave
+  type: NodePort
+  ports:
+  - nodePort: 32521
+    port: 3306
+    targetPort: 3306
+

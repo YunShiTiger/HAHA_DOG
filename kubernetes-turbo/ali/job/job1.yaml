@@ -1,0 +1,15 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: jb
+spec:
+  template:
+    metadata:
+      name: jb
+    spec:
+      containers:
+      - name: jb
+        image: ubuntu
+        command: ["/bin/sh"]
+        args: ["-c","sleep 30; date"]
+      restartPolicy: Never

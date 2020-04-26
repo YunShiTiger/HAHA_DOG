@@ -1,0 +1,152 @@
+# oracle数据库安装及调试
+
+### 1.拉取镜像
+
+```
+docker pull registry.cn-hangzhou.aliyuncs.com/helowin/oracle_11g
+
+```
+
+### 2.安装
+
+#### 创建网络
+
+```
+docker network create --subnet=172.20.0.0/16 oracle-network
+```
+
+#### 创建容器
+
+```
+docker run -d --name oracle \
+    --net oracle-network \
+    --ip 172.20.0.3 \
+    --privileged=true \
+    --restart unless-stopped \
+    -p 1521:1521 \
+    -v /home/oracle/helowin:/home/oracle/app/oracle/oradata/helowin \
+    registry.cn-qingdao.aliyuncs.com/caonima/oracle:fuck
+
+```
+
+### 3.调试bug
+
+#### 1).进入
+
+```
+source /home/oracle/.bash_profile
+sqlplus /nolog
+conn /as sysdba
+
+```
+
+#### 2).调试
+
+```
+1.找控制文件
+show parameter control_files;
+看到输出后查找对应目录是否有控制文件
+2.关闭数据库
+shutdown immediate
+3.粘贴缺少的控制文件
+(有可能需要修改权限)
+4.以nomount方式启动实例 
+startup nomount
+5.修改参数文件
+alter system set control_files='/home/oracle/app/oracle/oradata/helowin/control01.ctl' , '/home/oracle/app/oracle/flash_recovery_area/helowin/control02.ctl' scope=spfile;
+弹出"System altered"
+6.关闭数据库
+shutdown immediate
+7.开启数据库
+startup
+
+```
+
+### 4.导入数据
+
+```
+imp userid=firm/firm@helowin file=firm.dmp full=y;
+imp userid=examen/examen@helowin file=EXAMEN20181207.dmp full=y;
+```
+
+### 5.导出数据
+
+```
+exp userid=firm/firm@helowin file=/home/firm.dmp full=y;
+
+```
+
+### 6.创建/删除用户及赋予权限
+
+#### 1).创建用户
+
+```
+create user firm identified by firm;
+create user examen identified by examen;
+```
+
+#### 2).赋予权限
+
+```
+grant connect,resource,dba to firm;
+grant connect,resource,dba to examen;
+```
+
+#### 3).删除用户
+
+```
+drop user firm cascade;
+
+```
+
+
+
+### 7.数据库坏块问题
+
+问题:
+
+```
+ORA-00600: internal error code, arguments: [kcratr_scan_lastbwr], [], [], [],
+[], [], [], [], [], [], [], []
+
+```
+
+#### 1).关闭数据库
+
+```
+shutdown immediate;
+
+```
+
+#### 2).开启数据库
+
+```
+startup mount;
+
+```
+
+#### 3).恢复介质
+
+```
+recover database;
+alter database open;
+
+```
+
+#### 4).关闭数据库
+
+```
+shutdown immediate;
+
+```
+
+#### 5).开启数据库
+
+```
+startup
+
+```
+
+### 8.设置最大连接数
+
+select count(*) from v$process --当前的连接数 select value from v$parameter where name = 'processes' --数据库允许的最大连接数  修改最大连接数: alter system set processes = 300 scope = spfile;  重启数据库: shutdown immediate; startup;  --查看当前有哪些用户正在使用数据 SELECT osuser, a.username,cpu_time/executions/1000000||'s', sql_fulltext,machine  from v$session a, v$sqlarea b where a.sql_address =b.address order by cpu_time/executions desc;  

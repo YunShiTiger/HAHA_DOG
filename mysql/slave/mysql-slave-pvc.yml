@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-slave-data-mysql-slave-0
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeName: mysql-slave1-pv
+  resources:
+    requests:
+      storage: 30G
+  storageClassName: nfs 
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-slave-data-mysql-slave-1
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeName: mysql-slave2-pv
+  resources:
+    requests:
+      storage: 30G
+  storageClassName: nfs
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-slave-data-mysql-slave-2
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeName: mysql-slave3-pv
+  resources:
+    requests:
+      storage: 30G
+  storageClassName: nfs

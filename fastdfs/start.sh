@@ -1,0 +1,15 @@
+docker start tracker1
+docker start tracker2
+docker start tracker3
+docker start tracker4
+docker start tracker5
+docker start storage1
+docker start storage2
+docker start storage3
+docker start storage4
+docker start storage5
+docker start storage6
+docker start storage7
+docker start storage8
+docker start storage9
+docker start storage10

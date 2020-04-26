@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: es-pv-1
+  namespace: ns-elasticsearch
+spec:
+  capacity:
+    storage: 900G
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Recycle
+  nfs:
+    server: 192.168.240.60
+    path: /data/ES-data-1
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: es-pv-2
+  namespace: ns-elasticsearch
+spec:
+  capacity:
+    storage: 900G
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Recycle
+  nfs:
+    server: 192.168.240.61
+    path: /data/ES-data-2

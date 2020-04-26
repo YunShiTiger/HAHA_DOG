@@ -1,0 +1,41 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: fastdfs-proxy
+spec:
+  replicas: 10
+  template:
+    metadata:
+      labels:
+        run: fastdfs-proxy
+    spec:
+      containers:
+      - name: fastdfs-proxy
+        image: 192.168.188.77:5000/nginx:k8s
+        ports:
+        - containerPort: 31004
+        volumeMounts:
+        - name: "nginx-fastdfs-conf"
+          mountPath: "/etc/nginx/conf.d/"
+      volumes:
+      - name: "nginx-fastdfs-conf"
+        configMap:
+          name: "nginx-fastdfs-conf"
+          items:  
+            - key: "nginx.conf"
+              path: "nginx.conf"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastdfs-proxy
+spec:
+  selector:
+    run: fastdfs-proxy
+  type: NodePort
+  ports:
+  - name: fastdfs-proxy
+    nodePort: 31004
+    port: 31004
+    targetPort: 31004

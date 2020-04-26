@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ssl-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeName: ssl-pv
+  resources:
+    requests:
+      storage: 1G
+  storageClassName: nfs 

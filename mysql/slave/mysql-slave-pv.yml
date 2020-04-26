@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-slave1-pv
+spec:
+  capacity:
+    storage: 30G
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Recycle
+  storageClassName: nfs
+  nfs:
+    server: 10.1.11.26
+    path: /home/lhcz/mysql/slave/slave1/
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-slave2-pv
+spec:
+  capacity:
+    storage: 30G
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Recycle
+  storageClassName: nfs
+  nfs:
+    server: 10.1.11.26
+    path: /home/lhcz/mysql/slave/slave2/
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-slave3-pv
+spec:
+  capacity:
+    storage: 30G
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Recycle
+  storageClassName: nfs
+  nfs:
+    server: 10.1.11.26
+    path: /home/lhcz/mysql/slave/slave3/

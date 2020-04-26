@@ -1,0 +1,29 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: fuck-world
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        run: fuck-world
+    spec:
+      containers:
+      - name: fuck-world
+        image: registry.cn-qingdao.aliyuncs.com/caonima/fuck-world:2018-08-22
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fuck-world-svc
+spec:
+  selector:
+    run: fuck-world
+  type: NodePort
+  ports:
+  - nodePort: 30250
+    port: 8080
+    targetPort: 8080

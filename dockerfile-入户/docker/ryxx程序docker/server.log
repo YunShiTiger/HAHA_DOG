@@ -1,0 +1,142 @@
+2017-09-19 15:27:04,115 INFO [com.inspeeding.SyncInFromOut] main - start sync in from out ......V2017/07/13
+2017-09-19 15:27:09,116 WARN [com.inspeeding.SyncInFromOut] main - read file fail:sanhui_ydl.sql
+2017-09-19 15:27:09,116 WARN [com.inspeeding.SyncInFromOut] main - read file fail:sanhui_913.sql
+2017-09-19 15:27:09,117 WARN [com.inspeeding.SyncInFromOut] main - read file fail:sanhui_missing.sql
+2017-09-19 15:27:09,117 INFO [com.inspeeding.SyncInFromOut] main - dbUrl:jdbc:oracle:thin:@47.93.78.222:1521/pdborcl
+2017-09-19 15:27:47,988 INFO [com.inspeeding.SyncInFromOut] main - db connect success
+2017-09-19 15:27:48,028 INFO [com.inspeeding.SyncInFromOut] Thread-1 - grxx_1505801606890_398462_.zip/398462
+2017-09-19 15:27:48,041 INFO [com.inspeeding.SyncInFromOut] Thread-1 - delete file:grxx_1505801606890_398462_.zip
+2017-09-19 15:27:48,046 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-1 - zip have file - source0.jpg
+2017-09-19 15:27:48,048 FATAL [com.inspeeding.process.ProceeZipData] pool-2-thread-1 - process sync file fail:
+java.util.zip.ZipException: invalid stored block lengths
+	at java.util.zip.InflaterInputStream.read(InflaterInputStream.java:164)
+	at java.util.zip.ZipInputStream.read(ZipInputStream.java:194)
+	at java.io.FilterInputStream.read(FilterInputStream.java:107)
+	at com.inspeeding.process.ProceeZipData.processGrxx(ProceeZipData.java:80)
+	at com.inspeeding.process.ProceeZipData.run(ProceeZipData.java:54)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+2017-09-19 19:23:10,363 INFO [com.inspeeding.SyncInFromOut] main - start sync in from out ......V2017/07/13
+2017-09-19 19:23:15,365 WARN [com.inspeeding.SyncInFromOut] main - read file fail:sanhui_ydl.sql
+2017-09-19 19:23:15,366 WARN [com.inspeeding.SyncInFromOut] main - read file fail:sanhui_913.sql
+2017-09-19 19:23:15,366 WARN [com.inspeeding.SyncInFromOut] main - read file fail:sanhui_missing.sql
+2017-09-19 19:23:15,366 INFO [com.inspeeding.SyncInFromOut] main - dbUrl:jdbc:oracle:thin:@47.93.78.222:1521/pdborcl
+2017-09-19 19:23:35,189 INFO [com.inspeeding.SyncInFromOut] main - db connect success
+2017-09-19 19:23:35,235 INFO [com.inspeeding.SyncInFromOut] Thread-1 - gps_1505819939739_220_.json/220
+2017-09-19 19:23:35,236 INFO [com.inspeeding.SyncInFromOut] Thread-1 - delete file:gps_1505819939739_220_.json
+2017-09-19 19:23:35,237 INFO [com.inspeeding.SyncInFromOut] Thread-1 - gps_1505819939740_220_.json/220
+2017-09-19 19:23:35,239 INFO [com.inspeeding.SyncInFromOut] Thread-1 - delete file:gps_1505819939740_220_.json
+2017-09-19 19:23:35,243 INFO [com.inspeeding.SyncInFromOut] Thread-1 - grxx_1505801606890_398462_.zip/398462
+2017-09-19 19:23:35,250 INFO [com.inspeeding.SyncInFromOut] Thread-1 - delete file:grxx_1505801606890_398462_.zip
+2017-09-19 19:23:35,259 INFO [com.inspeeding.SyncInFromOut] Thread-1 - sync_1505820194666_94_.json/94
+2017-09-19 19:23:35,260 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-1 - zip have file - source0.jpg
+2017-09-19 19:23:35,260 INFO [com.inspeeding.SyncInFromOut] Thread-1 - delete file:sync_1505820194666_94_.json
+2017-09-19 19:23:35,267 INFO [com.inspeeding.process.ProceeSyncResource] pool-1-thread-1 - sync source:queryinfobyidnum/
+2017-09-19 19:23:35,469 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-1 - zip have file - data.json
+2017-09-19 19:23:35,469 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-1 - saveBuild
+2017-09-19 19:23:35,477 INFO [com.inspeeding.process.ProceeGpsData] pool-4-thread-2 - saveGps success
+2017-09-19 19:23:35,477 WARN [com.inspeeding.process.ProceeGpsData] pool-4-thread-2 - process gps file success!!!
+2017-09-19 19:23:35,478 INFO [com.inspeeding.process.ProceeGpsData] pool-4-thread-1 - saveGps success
+2017-09-19 19:23:35,478 WARN [com.inspeeding.process.ProceeGpsData] pool-4-thread-1 - process gps file success!!!
+2017-09-19 19:23:35,492 INFO [com.inspeeding.util.FtpUtil] pool-1-thread-1 - The data is uploaded successfully
+2017-09-19 19:23:35,504 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-1 - updateBuild:1
+2017-09-19 19:23:35,511 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-1 - saveBuildLog success
+2017-09-19 19:23:35,529 INFO [com.inspeeding.util.FtpUtil] pool-2-thread-1 - The data is uploaded successfully
+2017-09-19 19:23:55,328 INFO [com.inspeeding.SyncInFromOut] main - start sync in from out ......V2017/07/13
+2017-09-19 19:24:00,330 WARN [com.inspeeding.SyncInFromOut] main - read file fail:sanhui_ydl.sql
+2017-09-19 19:24:00,330 WARN [com.inspeeding.SyncInFromOut] main - read file fail:sanhui_913.sql
+2017-09-19 19:24:00,330 WARN [com.inspeeding.SyncInFromOut] main - read file fail:sanhui_missing.sql
+2017-09-19 19:24:00,330 INFO [com.inspeeding.SyncInFromOut] main - dbUrl:jdbc:oracle:thin:@47.93.78.222:1521/pdborcl
+2017-09-19 19:27:06,868 INFO [com.inspeeding.SyncInFromOut] main - start sync in from out ......V2017/07/13
+2017-09-19 19:27:11,870 WARN [com.inspeeding.SyncInFromOut] main - read file fail:sanhui_ydl.sql
+2017-09-19 19:27:11,870 WARN [com.inspeeding.SyncInFromOut] main - read file fail:sanhui_913.sql
+2017-09-19 19:27:11,870 WARN [com.inspeeding.SyncInFromOut] main - read file fail:sanhui_missing.sql
+2017-09-19 19:27:11,870 INFO [com.inspeeding.SyncInFromOut] main - dbUrl:jdbc:oracle:thin:@47.93.78.222:1521/pdborcl
+2017-09-19 19:27:39,082 INFO [com.inspeeding.SyncInFromOut] main - db connect success
+2017-09-19 19:27:39,123 INFO [com.inspeeding.SyncInFromOut] Thread-1 - gps_1505820239739_220_.json/220
+2017-09-19 19:27:39,124 INFO [com.inspeeding.SyncInFromOut] Thread-1 - delete file:gps_1505820239739_220_.json
+2017-09-19 19:27:39,125 INFO [com.inspeeding.SyncInFromOut] Thread-1 - grxx_1505820330761_398462_.zip/398462
+2017-09-19 19:27:39,128 INFO [com.inspeeding.SyncInFromOut] Thread-1 - delete file:grxx_1505820330761_398462_.zip
+2017-09-19 19:27:39,141 INFO [com.inspeeding.SyncInFromOut] Thread-1 - sync_1505820288454_53_.zip/53
+2017-09-19 19:27:39,142 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-1 - zip have file - source0.jpg
+2017-09-19 19:27:39,143 INFO [com.inspeeding.SyncInFromOut] Thread-1 - delete file:sync_1505820288454_53_.zip
+2017-09-19 19:27:39,150 INFO [com.inspeeding.process.ProceeSyncResource] pool-1-thread-1 - sync source:user_info/2017-03-26 11:22:34
+2017-09-19 19:27:39,326 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-1 - zip have file - data.json
+2017-09-19 19:27:39,327 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-1 - saveBuild
+2017-09-19 19:27:39,329 INFO [com.inspeeding.process.ProceeGpsData] pool-4-thread-1 - saveGps success
+2017-09-19 19:27:39,329 WARN [com.inspeeding.process.ProceeGpsData] pool-4-thread-1 - process gps file success!!!
+2017-09-19 19:27:39,342 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-1 - saveBuild success
+2017-09-19 19:27:39,347 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-1 - saveBuildLog success
+2017-09-19 19:27:39,350 INFO [com.inspeeding.util.FtpUtil] pool-1-thread-1 - The data is uploaded successfully
+2017-09-19 19:27:39,366 INFO [com.inspeeding.util.FtpUtil] pool-2-thread-1 - The data is uploaded successfully
+2017-09-19 19:27:43,158 INFO [com.inspeeding.SyncInFromOut] Thread-1 - grxx_1505820462853_615_.zip/615
+2017-09-19 19:27:43,159 INFO [com.inspeeding.SyncInFromOut] Thread-1 - delete file:grxx_1505820462853_615_.zip
+2017-09-19 19:27:43,160 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-2 - zip have file - data.json
+2017-09-19 19:27:43,160 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-2 - saveHouse
+2017-09-19 19:27:43,171 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-2 - saveHouse success
+2017-09-19 19:27:43,175 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-2 - saveHouseLog success
+2017-09-19 19:27:43,194 INFO [com.inspeeding.util.FtpUtil] pool-2-thread-2 - The data is uploaded successfully
+2017-09-19 19:28:00,193 INFO [com.inspeeding.SyncInFromOut] Thread-1 - gps_1505820479740_220_.json/220
+2017-09-19 19:28:00,194 INFO [com.inspeeding.SyncInFromOut] Thread-1 - delete file:gps_1505820479740_220_.json
+2017-09-19 19:28:00,195 INFO [com.inspeeding.SyncInFromOut] Thread-1 - gps_1505820479740_441_.json/441
+2017-09-19 19:28:00,196 INFO [com.inspeeding.SyncInFromOut] Thread-1 - delete file:gps_1505820479740_441_.json
+2017-09-19 19:28:00,200 INFO [com.inspeeding.process.ProceeGpsData] pool-4-thread-2 - saveGps success
+2017-09-19 19:28:00,200 WARN [com.inspeeding.process.ProceeGpsData] pool-4-thread-2 - process gps file success!!!
+2017-09-19 19:28:00,201 INFO [com.inspeeding.process.ProceeGpsData] pool-4-thread-3 - saveGps success
+2017-09-19 19:28:00,204 INFO [com.inspeeding.process.ProceeGpsData] pool-4-thread-3 - saveGps success
+2017-09-19 19:28:00,204 WARN [com.inspeeding.process.ProceeGpsData] pool-4-thread-3 - process gps file success!!!
+2017-09-19 19:29:50,418 INFO [com.inspeeding.SyncInFromOut] Thread-1 - sync_1505820589951_94_.json/94
+2017-09-19 19:29:50,419 INFO [com.inspeeding.SyncInFromOut] Thread-1 - delete file:sync_1505820589951_94_.json
+2017-09-19 19:29:50,420 INFO [com.inspeeding.process.ProceeSyncResource] pool-1-thread-2 - sync source:queryinfobyidnum/
+2017-09-19 19:29:50,702 WARN [com.inspeeding.process.ProceeSyncResource] pool-1-thread-2 - 调用身份信息失败！！
+2017-09-19 19:29:50,723 INFO [com.inspeeding.util.FtpUtil] pool-1-thread-2 - The data is uploaded successfully
+2017-09-19 19:30:24,488 INFO [com.inspeeding.SyncInFromOut] Thread-1 - grxx_1505820623977_1107_.zip/1107
+2017-09-19 19:30:24,489 INFO [com.inspeeding.SyncInFromOut] Thread-1 - delete file:grxx_1505820623977_1107_.zip
+2017-09-19 19:30:24,490 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-3 - zip have file - data.json
+2017-09-19 19:30:24,491 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-3 - savePerson
+2017-09-19 19:30:24,499 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-3 - savePerson success
+2017-09-19 19:30:24,500 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-3 - saveVehicle
+2017-09-19 19:30:24,501 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-3 - saveSword
+2017-09-19 19:30:24,502 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-3 - saveCutter
+2017-09-19 19:30:24,509 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-3 - savePersonLog success
+2017-09-19 19:30:24,510 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-3 - saveVehicleLog success
+2017-09-19 19:30:24,511 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-3 - saveSwordLog success
+2017-09-19 19:30:24,513 INFO [com.inspeeding.process.ProceeZipData] pool-2-thread-3 - saveCutterLog success
+2017-09-19 19:30:24,532 INFO [com.inspeeding.util.FtpUtil] pool-2-thread-3 - The data is uploaded successfully
+2017-09-19 19:30:40,524 INFO [com.inspeeding.SyncInFromOut] Thread-1 - gps_1505820639740_220_.json/220
+2017-09-19 19:30:40,525 INFO [com.inspeeding.SyncInFromOut] Thread-1 - delete file:gps_1505820639740_220_.json
+2017-09-19 19:30:40,531 INFO [com.inspeeding.process.ProceeGpsData] pool-4-thread-4 - saveGps success
+2017-09-19 19:30:40,531 WARN [com.inspeeding.process.ProceeGpsData] pool-4-thread-4 - process gps file success!!!
+2017-09-19 19:30:57,559 INFO [com.inspeeding.SyncInFromOut] Thread-1 - sync_1505820657010_94_.json/94
+2017-09-19 19:30:57,560 INFO [com.inspeeding.SyncInFromOut] Thread-1 - delete file:sync_1505820657010_94_.json
+2017-09-19 19:30:57,560 INFO [com.inspeeding.process.ProceeSyncResource] pool-1-thread-3 - sync source:queryinfobyidnum/
+2017-09-19 19:31:02,718 INFO [com.inspeeding.util.FtpUtil] pool-1-thread-3 - The data is uploaded successfully
+2017-09-19 19:32:59,800 INFO [com.inspeeding.SyncInFromOut] Thread-1 - gps_1505820779741_220_.json/220
+2017-09-19 19:32:59,801 INFO [com.inspeeding.SyncInFromOut] Thread-1 - delete file:gps_1505820779741_220_.json
+2017-09-19 19:32:59,807 INFO [com.inspeeding.process.ProceeGpsData] pool-4-thread-5 - saveGps success
+2017-09-19 19:32:59,807 WARN [com.inspeeding.process.ProceeGpsData] pool-4-thread-5 - process gps file success!!!
+2017-09-19 19:33:59,919 INFO [com.inspeeding.SyncInFromOut] Thread-1 - gps_1505820839739_220_.json/220
+2017-09-19 19:33:59,920 INFO [com.inspeeding.SyncInFromOut] Thread-1 - delete file:gps_1505820839739_220_.json
+2017-09-19 19:33:59,925 INFO [com.inspeeding.process.ProceeGpsData] pool-4-thread-1 - saveGps success
+2017-09-19 19:33:59,925 WARN [com.inspeeding.process.ProceeGpsData] pool-4-thread-1 - process gps file success!!!
+2017-09-19 19:35:40,118 INFO [com.inspeeding.SyncInFromOut] Thread-1 - gps_1505820939739_220_.json/220
+2017-09-19 19:35:40,119 INFO [com.inspeeding.SyncInFromOut] Thread-1 - delete file:gps_1505820939739_220_.json
+2017-09-19 19:35:40,124 INFO [com.inspeeding.process.ProceeGpsData] pool-4-thread-2 - saveGps success
+2017-09-19 19:35:40,124 WARN [com.inspeeding.process.ProceeGpsData] pool-4-thread-2 - process gps file success!!!
+2017-09-19 19:38:00,388 INFO [com.inspeeding.SyncInFromOut] Thread-1 - gps_1505821079739_220_.json/220
+2017-09-19 19:38:00,389 INFO [com.inspeeding.SyncInFromOut] Thread-1 - delete file:gps_1505821079739_220_.json
+2017-09-19 19:38:00,389 INFO [com.inspeeding.SyncInFromOut] Thread-1 - gps_1505821079740_220_.json/220
+2017-09-19 19:38:00,390 INFO [com.inspeeding.SyncInFromOut] Thread-1 - delete file:gps_1505821079740_220_.json
+2017-09-19 19:38:00,394 INFO [com.inspeeding.process.ProceeGpsData] pool-4-thread-4 - saveGps success
+2017-09-19 19:38:00,394 WARN [com.inspeeding.process.ProceeGpsData] pool-4-thread-4 - process gps file success!!!
+2017-09-19 19:38:00,395 INFO [com.inspeeding.process.ProceeGpsData] pool-4-thread-3 - saveGps success
+2017-09-19 19:38:00,395 WARN [com.inspeeding.process.ProceeGpsData] pool-4-thread-3 - process gps file success!!!
+2017-09-19 19:40:40,698 INFO [com.inspeeding.SyncInFromOut] Thread-1 - gps_1505821239739_220_.json/220
+2017-09-19 19:40:40,699 INFO [com.inspeeding.SyncInFromOut] Thread-1 - delete file:gps_1505821239739_220_.json
+2017-09-19 19:40:40,700 INFO [com.inspeeding.SyncInFromOut] Thread-1 - gps_1505821239740_220_.json/220
+2017-09-19 19:40:40,701 INFO [com.inspeeding.SyncInFromOut] Thread-1 - delete file:gps_1505821239740_220_.json
+2017-09-19 19:40:40,705 INFO [com.inspeeding.process.ProceeGpsData] pool-4-thread-5 - saveGps success
+2017-09-19 19:40:40,705 WARN [com.inspeeding.process.ProceeGpsData] pool-4-thread-5 - process gps file success!!!
+2017-09-19 19:40:40,706 INFO [com.inspeeding.process.ProceeGpsData] pool-4-thread-1 - saveGps success
+2017-09-19 19:40:40,706 WARN [com.inspeeding.process.ProceeGpsData] pool-4-thread-1 - process gps file success!!!

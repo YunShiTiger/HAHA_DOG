@@ -1,0 +1,38 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: demo
+  namespace: cao
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        run: demo
+    spec:
+      containers:
+      - name: demo
+        image: 192.168.159.130:5000/demo:2018-09-03-10-12
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: demo-storage
+          mountPath: /var/lib/demo
+  volumes:
+  - name: demo-storage
+    persistentVolumeClaim:
+      claimName: demo-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo
+  namespace: cao
+spec:
+  selector:
+    run: demo
+  type: NodePort
+  ports:
+  - nodePort: 30006
+    port: 8080
+    targetPort: 8080

@@ -1,0 +1,40 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-proxy
+spec:
+  replicas: 10
+  template:
+    metadata:
+      labels:
+        run: nginx-proxy
+    spec:
+      containers:
+      - name: nginx-proxy
+        image: 192.168.188.77:5000/nginx:k8s
+        ports:
+        - containerPort: 31003
+        volumeMounts:
+        - name: "nginx-proxy-conf"
+          mountPath: "/etc/nginx/conf.d/"
+      volumes:
+      - name: "nginx-proxy-conf"
+        configMap:
+          name: "nginx-proxy-conf"
+          items:  
+            - key: "nginx.conf"
+              path: "nginx.conf"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-proxy
+spec:
+  selector:
+    run: nginx-proxy
+  type: NodePort
+  ports:
+  - nodePort: 31003
+    port: 31003
+    targetPort: 31003

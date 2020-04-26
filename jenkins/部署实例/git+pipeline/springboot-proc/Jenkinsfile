@@ -1,0 +1,32 @@
+node{
+
+    stage('get clone'){
+        //check CODE
+        echo 'Checkout==========》》》'
+            git credentialsId: 'f921c9e0-0ec8-45c5-bb43-368d38f78ffe', url: 'http://39.105.150.112:33000/BZYQ/end-test.git'
+    }
+
+    //定义mvn环境
+    def maven = tool 'mvn'
+    env.PATH = "${maven}/bin:${env.PATH}"
+
+    def jdk = tool 'jdk'
+    env.PATH = "${jdk}/bin:${env.PATH}"
+
+    stage('mvn test'){
+        //mvn 测试
+        sh "mvn test"
+    }
+    
+    stage('mvn build'){
+        //mvn构建
+        sh "mvn clean install -Dmaven.test.skip=true"
+    }
+    
+    stage('deploy'){
+        //执行部署脚本
+        echo "deploy ......" 
+        sh "cd /var/lib/jenkins/workspace/end-test/ && sh cao.sh"
+    }
+	
+}

@@ -1,0 +1,12 @@
+version: '2'
+services:
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.6.2
+    environment:
+      ELASTICSEARCH_HOSTS: http://202.107.190.8:10161
+    ports:
+      - 10001:5601
+    networks:
+      - esnet
+networks:
+  esnet:

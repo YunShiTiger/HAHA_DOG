@@ -1,0 +1,40 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: test
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        run: test
+    spec:
+      containers:
+      - name: test
+        image: 192.168.188.77:5000/nginx:k8s
+        ports:
+        - containerPort: 31005
+        volumeMounts:
+        - name: "test-conf"
+          mountPath: "/etc/nginx/conf.d/"
+      volumes:
+      - name: "test-conf"
+        configMap:
+          name: "test-conf"
+          items:  
+            - key: "nginx.conf"
+              path: "nginx.conf"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: test
+spec:
+  selector:
+    run: test
+  type: NodePort
+  ports:
+  - nodePort: 31005
+    port: 31005
+    targetPort: 31005

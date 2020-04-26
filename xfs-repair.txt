@@ -1,0 +1,14 @@
+修复步骤：
+ls -l /dev/mapper
+
+mkdir /mnt
+
+mount /dev/mapper/cl_muban-root /mnt
+
+umount /mnt
+
+xfs_repair /dev/mapper/cl_muban-root   # 或 xfs_repair  /dev/dm-0
+
+init 6 
+
+

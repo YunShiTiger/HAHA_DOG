@@ -1,0 +1,67 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: mysql-slave
+spec:
+  serviceName: mysql-slave-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysql-slave
+    spec:
+      containers:
+      - name: mysql-slave
+        image: 192.168.1.21/test/mysql:slave
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "asdlkjcs123.."
+        - name: MYSQL_REPLICATION_USER
+          value: "repl"
+        - name: MYSQL_REPLICATION_PASSWORD
+          value: "asdlkjcs213.."
+        - name: MAX_CONNECTIONS
+          value: "10000"
+        - name: TZ
+          value: "Asia/Shanghai"
+        volumeMounts:
+          - name: mysql-slave-data
+            mountPath: /var/lib/mysql
+          - name: mysql-slave-conf
+            mountPath: /etc/mysql/mysql.conf.d/
+      volumes:
+      - name: mysql-slave-conf
+        configMap:
+          name: mysql-slave-conf
+          items:
+            - key: "mysqld.cnf"
+              path: "mysqld.cnf"
+      - name: mysql-slave-data
+        hostPath:
+          path: /data/mysql/data
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: worker
+                    operator: In
+                    values:
+                      - worker
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-slave
+spec:
+  selector:
+    app: mysql-slave
+  type: NodePort
+  ports:
+  - nodePort: 30009
+    port: 3306
+    targetPort: 3306
+

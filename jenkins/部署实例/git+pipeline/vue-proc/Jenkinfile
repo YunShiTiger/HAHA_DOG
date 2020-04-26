@@ -1,0 +1,25 @@
+node{
+
+    stage('get clone'){
+        //check CODE
+        echo 'Checkout==========》》》'
+        git credentialsId: 'f921c9e0-0ec8-45c5-bb43-368d38f78ffe', url: 'http://39.105.150.112:33000/BZYQ/front-test.git'
+    }
+
+    //定义node环境
+    def node = tool 'node'
+    env.PATH = "${node}/bin:${env.PATH}"
+
+    stage('build'){
+        //mvn构建
+        sh "cnpm install"
+        sh "cnpm run build"
+    }
+    
+    stage('deploy'){
+        //执行部署脚本
+        echo "deploy ......" 
+        sh "sh cao.sh"
+    }
+	
+}

@@ -1,0 +1,67 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: mysql-master
+spec:
+  serviceName: mysql-master-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysql-master
+    spec:
+      containers:
+      - name: mysql-masterr
+        image: 192.168.1.21/test/mysql:master 
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "asdlkjcs123.."
+        - name: MYSQL_REPLICATION_USER
+          value: "repl"
+        - name: MYSQL_REPLICATION_PASSWORD
+          value: "asdlkjcs213.."
+        - name: MAX_CONNECTIONS
+          value: "10000"
+        - name: TZ
+          value: "Asia/Shanghai"
+        volumeMounts:
+          - name: mysql-master-data
+            mountPath: /var/lib/mysql
+          - name: mysql-master-conf
+            mountPath: /etc/mysql/mysql.conf.d/
+      volumes:
+      - name: mysql-master-conf
+        configMap:
+          name: mysql-master-conf
+          items:  
+            - key: "mysqld.cnf"
+              path: "mysqld.cnf"
+      - name: mysql-master-data
+        hostPath:
+          path: /data/mysql/data
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: worker
+                    operator: In
+                    values:
+                      - master
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-master
+spec:
+  selector:
+    app: mysql-master
+  type: NodePort
+  ports:
+  - nodePort: 30008
+    port: 3306
+    targetPort: 3306
+

@@ -1,0 +1,47 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-ssl
+spec:
+  replicas: 5
+  template:
+    metadata:
+      labels:
+        run: nginx-ssl
+    spec:
+      containers:
+      - name: nginx-ssl
+        image: nginx
+        ports:
+        - containerPort: 30015
+        volumeMounts:
+        - name: "nginx-ssl-conf"
+          mountPath: "/etc/nginx/conf.d/"
+        - name: ssl
+          mountPath: /home/
+
+      volumes:
+      - name: "nginx-ssl-conf"
+        configMap:
+          name: "nginx-ssl-conf"
+          items:  
+            - key: "nginx.conf"
+              path: "nginx.conf"
+      - name: ssl
+        persistentVolumeClaim:
+          claimName: ssl-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-ssl
+spec:
+  selector:
+    run: nginx-ssl
+  type: NodePort
+  ports:
+  - name: nginx-ssl
+    nodePort: 30015
+    port: 30015
+    targetPort: 30015

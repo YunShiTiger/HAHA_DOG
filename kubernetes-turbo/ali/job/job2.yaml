@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: jb-paral
+spec:
+  completions: 8
+  parallelism: 2
+  template:
+    metadata:
+      name: jb-paral
+    spec:
+      containers:
+      - name: jb-paral
+        image: ubuntu
+        command: ["/bin/sh"]
+        args: ["-c","sleep 30; date"]
+      restartPolicy: OnFailure
