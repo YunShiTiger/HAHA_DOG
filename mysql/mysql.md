@@ -718,3 +718,35 @@ exit
 EOF
 ```
 
+
+
+## 设置特定IP访问
+
+### 查看MYSQL数据库中所有用户
+
+```
+SELECT DISTINCT CONCAT('User: ''',user,'''@''',host,''';') AS query FROM mysql.user;
+```
+
+```
+如果有：
+User: 'root'@'%';  表示所有IP都可以用root账号访问，需要把它删掉
+```
+
+### 删除账户及权限：
+
+```
+drop user root@'%';
+```
+
+### 赋予权限：
+
+```
+GRANT ALL ON *.* to root@'176.16.0.3' IDENTIFIED BY 'asdlkjCS123..'; 
+```
+
+```
+FLUSH PRIVILEGES;
+```
+
+## 
