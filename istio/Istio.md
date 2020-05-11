@@ -28,6 +28,10 @@ curl -L https://istio.io/downloadIstio | sh -
 
 ### 安装istio
 
+```
+https://istio.io/zh/docs/setup/install/istioctl/
+```
+
 #### 进入安装目录
 
 ```
@@ -38,7 +42,7 @@ cd istio-1.5.1
 
 - `install/kubernetes` 目录下，有 Kubernetes 相关的 YAML 安装文件
 - `samples/` 目录下，有示例应用程序
-- `bin/` 目录下，包含 [`istioctl`](https://istio.io/zh/docs/reference/commands/istioctl) 的客户端文件。`istioctl` 工具用于手动注入 Envoy sidecar 代理。
+- `bin/` 目录下，包含 [`istioctl`]的客户端文件。`istioctl` 工具用于手动注入 Envoy sidecar 代理。
 
 #### 将 `istioctl` 客户端路径增加到 path 环境变量中
 
@@ -63,6 +67,7 @@ yum install bash-completion -y
 
 ```
 [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
+
 ```
 
 ##### 复制`istioctl.bash`至home目录
@@ -71,25 +76,44 @@ yum install bash-completion -y
 
 ```
 cp tools/istioctl.bash /root/
+
 ```
 
 ```
 cp tools/istioctl.bash /home/
+
 ```
 
 ##### source
 
 ```
 source ~/istioctl.bash
+
 ```
 
 #### 安装
 
 ```
 istioctl manifest apply --set addonComponents.grafana.enabled=true
+
 ```
 
 `--set addonComponents.grafana.enabled=true`开启grafana监控
+
+```
+istioctl manifest apply --set profile=demo
+
+```
+
+*demo版本⬆️⬆️⬆️*
+
+```
+自定义:
+istioctl manifest apply --set addonComponents.grafana.enabled=true --set components.citadel.enabled=true 
+
+```
+
+
 
 ##### 验证
 
@@ -97,32 +121,45 @@ istioctl manifest apply --set addonComponents.grafana.enabled=true
 
 ```
 istioctl manifest generate > $HOME/generated-manifest.yaml
+
 ```
+
+```
+istioctl manifest generate --set profile=demo > $HOME/generated-manifest.yaml
+
+```
+
+*demo版本⬆️⬆️⬆️*
 
 查看
 
 ```
 cat /root/generated-manifest.yaml 
+
 ```
 
 ###### 验证
 
 ```
 istioctl verify-install -f $HOME/generated-manifest.yaml
+
 ```
 
 #### 将istio网关(gateway)改为NodePort
 
 ```
 export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
+
 ```
 
 ```
 export SECURE_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="https")].nodePort}')
+
 ```
 
 ```
 kubectl edit svc istio-ingressgateway -n istio-system
+
 ```
 
 修改`Type`为`NodePort`
@@ -133,6 +170,7 @@ kubectl edit svc istio-ingressgateway -n istio-system
 
 ```
 istioctl manifest generate <your original installation options> | kubectl delete -f -
+
 ```
 
 
@@ -160,36 +198,42 @@ Istio 默认自动注入 Sidecar. 为 default 命名空间打上标签 istio-inj
 
 ```
 kubectl label namespace default istio-injection=enabled
+
 ```
 
 ##### 部署
 
 ```
 kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
+
 ```
 
 确认 Bookinfo 应用是否正在运行
 
 ```
 kubectl exec -it $(kubectl get pod -l app=ratings -o jsonpath='{.items[0].metadata.name}') -c ratings -- curl productpage:9080/productpage | grep -o "<title>.*</title>"
+
 ```
 
 打印
 
 ```
 <title>Simple Bookstore App</title>
+
 ```
 
 ##### 创建网关和虚拟路由
 
 ```
 kubectl apply -f samples/bookinfo/networking/bookinfo-gateway.yaml
+
 ```
 
 #### 集群外部访问
 
 ```
 curl -s 192.168.240.121:32723/productpage | grep -o "<title>.*</title>"
+
 ```
 
 #### 应用默认目标规则
@@ -198,12 +242,14 @@ curl -s 192.168.240.121:32723/productpage | grep -o "<title>.*</title>"
 
 ```
 kubectl apply -f samples/bookinfo/networking/destination-rule-all.yaml
+
 ```
 
 ##### HTTPS
 
 ```
 kubectl apply -f samples/bookinfo/networking/destination-rule-all-mtls.yaml
+
 ```
 
 
@@ -213,10 +259,12 @@ kubectl apply -f samples/bookinfo/networking/destination-rule-all-mtls.yaml
 ```
 reviews:v1 带星
 reviews:v2 不带星
+
 ```
 
 ```
 https://istio.io/zh/docs/tasks/traffic-management/request-routing/
+
 ```
 
 #### 配置请求路由
@@ -225,6 +273,7 @@ https://istio.io/zh/docs/tasks/traffic-management/request-routing/
 
 ```
 kubectl apply -f samples/bookinfo/networking/virtual-service-all-v1.yaml
+
 ```
 
 *由于配置传播是最终一致的，因此请等待几秒钟以使 virtual services 生效。*
@@ -233,6 +282,7 @@ kubectl apply -f samples/bookinfo/networking/virtual-service-all-v1.yaml
 
 ```
 kubectl get virtualservices -o yaml
+
 ```
 
 打印
@@ -297,18 +347,21 @@ spec:
         host: reviews
         subset: v1
 ---
+
 ```
 
 使用以下命令显示相应的 `subset` 定义:
 
 ```
 kubectl get destinationrules -o yaml
+
 ```
 
 ###### 验证
 
 ```
 http://202.107.190.8:10385/productpage
+
 ```
 
 #### 基于用户身份路由
@@ -321,12 +374,14 @@ http://202.107.190.8:10385/productpage
 
 ```
 kubectl apply -f samples/bookinfo/networking/virtual-service-reviews-test-v2.yaml
+
 ```
 
 ##### 确认规则已创建
 
 ```
 kubectl get virtualservice reviews -o yaml
+
 ```
 
 打印
@@ -353,6 +408,7 @@ spec:
     - destination:
         host: reviews
         subset: v1
+
 ```
 
 - 在 Bookinfo 应用程序的 `/productpage` 上，以用户 `jason` 身份登录。
@@ -360,6 +416,7 @@ spec:
   ```
   星级评分显示在每个评论旁边。
   因为Jason的所有用户的流量都被路由到 reviews:v2。
+  
   ```
 
 - 以其他用户身份登录（选择您想要的任何名称）。
@@ -367,6 +424,7 @@ spec:
   ```
   刷新浏览器后星星消失了。
   这是因为除了Jason之外，所有用户的流量都被路由到 reviews:v1。
+  
   ```
 
 
@@ -384,12 +442,14 @@ spec:
 
 ```
 kubectl apply -f samples/bookinfo/networking/virtual-service-all-v1.yaml
+
 ```
 
 ###### 把 50% 的流量从 `reviews:v1` 转移到 `reviews:v3`
 
 ```
 kubectl apply -f samples/bookinfo/networking/virtual-service-reviews-50-v3.yaml
+
 ```
 
 **等待几秒钟以让新的规则传播到代理中生效。**
@@ -398,6 +458,7 @@ kubectl apply -f samples/bookinfo/networking/virtual-service-reviews-50-v3.yaml
 
 ```
 kubectl get virtualservice reviews -o yaml
+
 ```
 
 打印
@@ -421,24 +482,28 @@ spec:
         host: reviews
         subset: v3
       weight: 50
+
 ```
 
 验证
 
 ```
 刷新浏览器中的 /productpage 页面，大约有 50% 的几率会看到页面中出带 红色 星级的评价内容。这是因为 v3 版本的 reviews 访问了带星级评级的 ratings 服务，但 v1 版本却没有。
+
 ```
 
 ###### 如果 `reviews:v3` 微服务已经稳定，你可以通过应用此 virtual service 规则将 100% 的流量路由到 `reviews:v3`
 
 ```
 kubectl apply -f samples/bookinfo/networking/virtual-service-reviews-v3.yaml
+
 ```
 
 验证
 
 ```
 刷新 /productpage 时，将始终看到带有红色星级评分的书评。
+
 ```
 
 #### TCP流量转移
@@ -451,30 +516,35 @@ kubectl apply -f samples/bookinfo/networking/virtual-service-reviews-v3.yaml
 
 ```
 kubectl create namespace istio-io-tcp-traffic-shifting
+
 ```
 
 ###### 手动注入
 
 ```
 kubectl apply -f <(istioctl kube-inject -f samples/tcp-echo/tcp-echo-services.yaml) -n istio-io-tcp-traffic-shifting
+
 ```
 
 ###### 自动注入
 
 ```
 kubectl label namespace istio-io-tcp-traffic-shifting istio-injection=enabled
+
 ```
 
 ###### 部署
 
 ```
 kubectl apply -f samples/tcp-echo/tcp-echo-services.yaml -n istio-io-tcp-traffic-shifting
+
 ```
 
 ##### 将目标为微服务 `tcp-echo` 的 TCP 流量全部路由到 `v1` 版本
 
 ```
 kubectl apply -f samples/tcp-echo/tcp-echo-all-v1.yaml -n istio-io-tcp-traffic-shifting
+
 ```
 
 ##### 确认 `tcp-echo` 服务已启动并开始运行
@@ -485,6 +555,7 @@ kubectl apply -f samples/tcp-echo/tcp-echo-all-v1.yaml -n istio-io-tcp-traffic-s
 for i in {1..10}; do \
 docker run -it --rm busybox sh -c "(date; sleep 1) | nc 192.168.240.121 30514"; \
 done
+
 ```
 
 打印
@@ -497,6 +568,7 @@ one Tue Apr 21 09:17:02 UTC 2020
 one Tue Apr 21 09:17:04 UTC 2020
 one Tue Apr 21 09:17:06 UTC 2020
 one Tue Apr 21 09:17:07 UTC 2020
+
 ```
 
 *注意到，所有时间戳的前缀都是 one ，这意味着所有流量都被路由到了 tcp-echo 服务的 v1 版本。*
@@ -505,12 +577,14 @@ one Tue Apr 21 09:17:07 UTC 2020
 
 ```
 kubectl apply -f samples/tcp-echo/tcp-echo-20-v2.yaml -n istio-io-tcp-traffic-shifting
+
 ```
 
 验证
 
 ```
 kubectl get virtualservice tcp-echo -o yaml -n istio-io-tcp-traffic-shifting
+
 ```
 
 打印
@@ -539,6 +613,7 @@ spec:
           number: 9000
         subset: v2
       weight: 20
+
 ```
 
 ##### 向微服务 `tcp-echo` 发送一些 TCP 流量
@@ -547,6 +622,7 @@ spec:
 for i in {1..10}; do \
 docker run -it --rm busybox sh -c "(date; sleep 1) | nc 192.168.240.121 30514"; \
 done
+
 ```
 
 打印
@@ -562,6 +638,7 @@ one Tue Apr 21 09:31:15 UTC 2020
 one Tue Apr 21 09:31:16 UTC 2020
 one Tue Apr 21 09:31:18 UTC 2020
 one Tue Apr 21 09:31:20 UTC 2020
+
 ```
 
 *有大约 20% 的流量时间戳前缀是 two ，这意味着有 80% 的 TCP 流量路由到了 tcp-echo 服务的 v1 版本，与此同时有 20% 流量路由到了 v2 版本。*
@@ -573,6 +650,7 @@ one Tue Apr 21 09:31:20 UTC 2020
 ```
 kubectl apply -f samples/bookinfo/networking/virtual-service-all-v1.yaml
 kubectl apply -f samples/bookinfo/networking/virtual-service-reviews-test-v2.yaml
+
 ```
 
 经过上面的配置，下面是请求的流程：
@@ -586,18 +664,21 @@ kubectl apply -f samples/bookinfo/networking/virtual-service-reviews-test-v2.yam
 为了测试微服务应用程序 Bookinfo 的弹性，将为用户 jason 在 reviews:v2 和 ratings 服务之间注入一个 7 秒的延迟。 这个测试将会发现一个故意引入 Bookinfo 应用程序中的 bug。
 
 注意 reviews:v2 服务对 ratings 服务的调用具有 10 秒的硬编码连接超时。 因此，尽管引入了 7 秒的延迟，但仍然期望端到端的流程是没有任何错误的。
+
 ```
 
 ###### 创建故障注入规则以延迟来自测试用户 `jason` 的流量：
 
 ```
 kubectl apply -f samples/bookinfo/networking/virtual-service-ratings-test-delay.yaml
+
 ```
 
 确认
 
 ```
 kubectl get virtualservice ratings -o yaml
+
 ```
 
 新的规则可能需要几秒钟才能传播到所有的 pod 。
@@ -613,6 +694,7 @@ kubectl get virtualservice ratings -o yaml
    ```plain
    Error fetching product reviews!
    Sorry, product reviews are currently unavailable for this book.
+   
    ```
 
 3. 查看页面的响应时间：
@@ -629,6 +711,7 @@ kubectl get virtualservice ratings -o yaml
 按照预期，我们引入的 7 秒延迟不会影响到 reviews 服务，因为 reviews 和 ratings 服务间的超时被硬编码为 10 秒。 但是，在 productpage 和 reviews 服务之间也有一个 3 秒的硬编码的超时，再加 1 次重试，一共 6 秒。 结果，productpage 对 reviews 的调用在 6 秒后提前超时并抛出错误了。
 
 这种类型的错误可能发生在典型的由不同的团队独立开发不同的微服务的企业应用程序中。 Istio 的故障注入规则可以帮助您识别此类异常，而不会影响最终用户。
+
 ```
 
 **此次故障注入限制为仅影响用户 `jason`。如果您以任何其他用户身份登录，则不会遇到任何延迟。**
@@ -645,6 +728,7 @@ kubectl get virtualservice ratings -o yaml
 
 ```
 kubectl apply -f samples/bookinfo/networking/virtual-service-all-v1.yaml
+
 ```
 
 ##### 请求超时
@@ -668,6 +752,7 @@ spec:
         host: reviews
         subset: v2
 EOF
+
 ```
 
 ###### 给对 `ratings` 服务的调用添加 2 秒的延迟：
@@ -691,6 +776,7 @@ spec:
         host: ratings
         subset: v1
 EOF
+
 ```
 
 ##### 验证
@@ -698,6 +784,7 @@ EOF
 ```
 在浏览器中打开 Bookinfo 的网址 http://$GATEWAY_URL/productpage。
 这时可以看到 Bookinfo 应用运行正常（显示了评级的星型符号），但是每次刷新页面，都会有 2 秒的延迟。
+
 ```
 
 ##### 对 `reviews` 服务的调用增加一个半秒的请求超时
@@ -718,6 +805,7 @@ spec:
         subset: v2
     timeout: 0.5s
 EOF
+
 ```
 
 ##### 验证
@@ -725,12 +813,14 @@ EOF
 ```
 刷新 Bookinfo 页面。
 这时候应该看到 1 秒钟就会返回，而不是之前的 2 秒钟，但 reviews 是不可用的。
+
 ```
 
 ##### 注解:
 
 ```
 即使超时配置为半秒，响应仍需要 1 秒，是因为 productpage 服务中存在硬编码重试，因此它在返回之前调用 reviews 服务超时两次。
+
 ```
 
 #### 熔断
@@ -739,12 +829,14 @@ EOF
 
 ```
 熔断，是创建弹性微服务应用程序的重要模式。熔断能够使您的应用程序具备应对来自故障、潜在峰值和其他 未知网络因素影响的能力。
+
 ```
 
 ##### 部署 `httpbin` 服务
 
 ```
 kubectl apply -f samples/httpbin/httpbin.yaml
+
 ```
 
 ##### 配置熔断器
@@ -772,18 +864,21 @@ spec:
       baseEjectionTime: 3m
       maxEjectionPercent: 100
 EOF
+
 ```
 
 https证书版本↓↓↓
 
 ```
 https://istio.io/zh/docs/ops/common-problems/network-issues/#service-unavailable-errors-after-setting-destination-rule
+
 ```
 
 ###### 验证
 
 ```
 kubectl get destinationrule httpbin -o yaml
+
 ```
 
 打印
@@ -808,24 +903,28 @@ spec:
       consecutiveErrors: 1
       interval: 1.000s
       maxEjectionPercent: 100
+
 ```
 
 ##### 增加一个客户
 
 ```
 创建客户端程序以发送流量到 httpbin 服务。这是一个名为 Fortio 的负载测试客户的，其可以控制连接数、并发数及发送 HTTP 请求的延迟。通过 Fortio 能够有效的触发前面 在 DestinationRule 中设置的熔断策略。
+
 ```
 
 ###### 向客户端注入 Istio Sidecar 代理，以便 Istio 对其网络交互进行管理
 
 ```
 kubectl apply -f <(istioctl kube-inject -f samples/httpbin/sample-client/fortio-deploy.yaml)
+
 ```
 
 ###### 登入客户端 Pod 并使用 Fortio 工具调用 `httpbin` 服务。`-curl` 参数表明发送一次调用：
 
 ```
 FORTIO_POD=$(kubectl get pod | grep fortio | awk '{ print $1 }')
+
 ```
 
 ```
@@ -854,6 +953,7 @@ x-envoy-upstream-service-time: 36
   "origin": "127.0.0.1",
   "url": "http://httpbin:8000/get"
 }
+
 ```
 
 *可以看到调用后端服务的请求已经成功！接下来，可以测试熔断。*
@@ -866,6 +966,7 @@ x-envoy-upstream-service-time: 36
 
 ```
 kubectl exec -it $FORTIO_POD  -c fortio /usr/bin/fortio -- load -c 2 -qps 0 -n 20 -loglevel Warning http://httpbin:8000/get
+
 ```
 
 打印
@@ -896,6 +997,7 @@ Code 503 : 1 (5.0 %)
 Response Header Sizes : count 20 avg 218.85 +/- 50.21 min 0 max 231 sum 4377
 Response Body/Total Sizes : count 20 avg 652.45 +/- 99.9 min 217 max 676 sum 13049
 All done 20 calls (plus 0 warmup) 10.215 ms avg, 187.8 qps
+
 ```
 
 **几乎所有的请求都完成了！`istio-proxy` 确实允许存在一些误差。**
@@ -903,12 +1005,14 @@ All done 20 calls (plus 0 warmup) 10.215 ms avg, 187.8 qps
 ```
 Code 200 : 19 (95.0 %)
 Code 503 : 1 (5.0 %)
+
 ```
 
 ###### 将并发连接数提高到 3 个
 
 ```
 kubectl exec -it $FORTIO_POD  -c fortio /usr/bin/fortio -- load -c 3 -qps 0 -n 30 -loglevel Warning http://httpbin:8000/get
+
 ```
 
 打印
@@ -951,6 +1055,7 @@ Code 503 : 11 (36.7 %)
 Response Header Sizes : count 30 avg 145.73333 +/- 110.9 min 0 max 231 sum 4372
 Response Body/Total Sizes : count 30 avg 507.13333 +/- 220.8 min 217 max 676 sum 15214
 All done 30 calls (plus 0 warmup) 5.336 ms avg, 422.2 qps
+
 ```
 
 **开始看到预期的熔断行为，只有 63.3% 的请求成功，其余的均被熔断器拦截：**
@@ -958,12 +1063,14 @@ All done 30 calls (plus 0 warmup) 5.336 ms avg, 422.2 qps
 ```
 Code 200 : 19 (63.3 %)
 Code 503 : 11 (36.7 %)
+
 ```
 
 ###### 查询 `istio-proxy` 状态以了解更多熔断详情
 
 ```
 kubectl exec $FORTIO_POD -c istio-proxy -- pilot-agent request GET stats | grep httpbin | grep pending
+
 ```
 
 打印
@@ -973,6 +1080,7 @@ cluster.outbound|80||httpbin.springistio.svc.cluster.local.upstream_rq_pending_a
 cluster.outbound|80||httpbin.springistio.svc.cluster.local.upstream_rq_pending_failure_eject: 0
 cluster.outbound|80||httpbin.springistio.svc.cluster.local.upstream_rq_pending_overflow: 12
 cluster.outbound|80||httpbin.springistio.svc.cluster.local.upstream_rq_pending_total: 39
+
 ```
 
 *可以看到 `upstream_rq_pending_overflow` 值 `12`，这意味着，目前为止已有 12 个调用被标记为熔断。*
@@ -983,6 +1091,7 @@ cluster.outbound|80||httpbin.springistio.svc.cluster.local.upstream_rq_pending_t
 
 ```
 首先把流量全部路由到 v1 版本的测试服务。然后，执行规则将一部分流量镜像到 v2 版本。
+
 ```
 
 ##### 部署两个版本的 httpbin 服务，httpbin 服务已开启访问日志
@@ -1015,6 +1124,7 @@ spec:
         ports:
         - containerPort: 80
 EOF
+
 ```
 
 **httpbin-v2:**
@@ -1045,6 +1155,7 @@ spec:
         ports:
         - containerPort: 80
 EOF
+
 ```
 
 **httpbin Kubernetes service:**
@@ -1065,6 +1176,7 @@ spec:
   selector:
     app: httpbin
 EOF
+
 ```
 
 ##### 启动 `sleep` 服务，这样就可以使用 `curl` 来提供负载了：
@@ -1093,12 +1205,14 @@ spec:
         command: ["/bin/sleep","infinity"]
         imagePullPolicy: IfNotPresent
 EOF
+
 ```
 
 ##### 创建一个默认路由策略
 
 ```
 默认情况下，Kubernetes 在 httpbin 服务的两个版本之间进行负载均衡。在此步骤中会更改该行为，把所有流量都路由到 v1。
+
 ```
 
 ###### 创建一个默认路由规则，将所有流量路由到服务的 `v1`：
@@ -1133,16 +1247,19 @@ spec:
     labels:
       version: v2
 EOF
+
 ```
 
 ###### 向服务发送一下流量：
 
 ```
 export SLEEP_POD=$(kubectl get pod -l app=sleep -o jsonpath={.items..metadata.name})
+
 ```
 
 ```
 kubectl exec -it $SLEEP_POD -c sleep -- sh -c 'curl  http://httpbin:8000/headers' | python -m json.tool
+
 ```
 
 打印
@@ -1160,6 +1277,7 @@ kubectl exec -it $SLEEP_POD -c sleep -- sh -c 'curl  http://httpbin:8000/headers
     "X-Ot-Span-Context": "eca3d7ed8f2e6a0a;eca3d7ed8f2e6a0a;0000000000000000"
   }
 }
+
 ```
 
 ###### 分别查看 `httpbin` 服务 `v1` 和 `v2` 两个 pods 的日志，您可以看到访问日志进入 `v1`，而 `v2` 中没有日志，显示为 `none`：
@@ -1169,12 +1287,14 @@ kubectl exec -it $SLEEP_POD -c sleep -- sh -c 'curl  http://httpbin:8000/headers
 ```
 export V1_POD=$(kubectl get pod -l app=httpbin,version=v1 -o jsonpath={.items..metadata.name})
 kubectl logs -f $V1_POD -c httpbin
+
 ```
 
 打印
 
 ```
 127.0.0.1 - - [07/Mar/2018:19:02:43 +0000] "GET /headers HTTP/1.1" 200 321 "-" "curl/7.35.0"
+
 ```
 
 `查看V2`
@@ -1182,12 +1302,14 @@ kubectl logs -f $V1_POD -c httpbin
 ```
 export V2_POD=$(kubectl get pod -l app=httpbin,version=v2 -o jsonpath={.items..metadata.name})
 kubectl logs -f $V2_POD -c httpbin
+
 ```
 
 打印
 
 ```
 <none>
+
 ```
 
 ##### 镜像流量到 v2
@@ -1214,6 +1336,7 @@ spec:
       subset: v2
     mirror_percent: 100
 EOF
+
 ```
 
 ```
@@ -1222,12 +1345,14 @@ EOF
 此外，重点注意这些被镜像的流量是『 即发即弃』 的，就是说镜像请求的响应会被丢弃。
 
 您可以使用 mirror_percent 属性来设置镜像流量的百分比，而不是镜像全部请求。为了兼容老版本，如果这个属性不存在，将镜像所有流量。
+
 ```
 
 ###### 发送流量：
 
 ```
 kubectl exec -it $SLEEP_POD -c sleep -- sh -c 'curl  http://httpbin:8000/headers' | python -m json.tool
+
 ```
 
 现在就可以看到 `v1` 和 `v2` 中都有了访问日志。v2 中的访问日志就是由镜像流量产生的，这些请求的实际目标是 v1。
@@ -1236,6 +1361,7 @@ kubectl exec -it $SLEEP_POD -c sleep -- sh -c 'curl  http://httpbin:8000/headers
 
 ```
 kubectl logs -f $V1_POD -c httpbin
+
 ```
 
 打印
@@ -1243,18 +1369,21 @@ kubectl logs -f $V1_POD -c httpbin
 ```
 127.0.0.1 - - [07/Mar/2018:19:02:43 +0000] "GET /headers HTTP/1.1" 200 321 "-" "curl/7.35.0"
 127.0.0.1 - - [07/Mar/2018:19:26:44 +0000] "GET /headers HTTP/1.1" 200 321 "-" "curl/7.35.0"
+
 ```
 
 `查看V2`
 
 ```
 kubectl logs -f $V2_POD -c httpbin
+
 ```
 
 打印
 
 ```
 127.0.0.1 - - [07/Mar/2018:19:26:44 +0000] "GET /headers HTTP/1.1" 200 361 "-" "curl/7.35.0"
+
 ```
 
 ##### 如果要检查流量内部，请在另一个控制台上运行以下命令：
@@ -1264,5 +1393,1291 @@ export SLEEP_POD=$(kubectl get pod -l app=sleep -o jsonpath={.items..metadata.na
 export V1_POD_IP=$(kubectl get pod -l app=httpbin,version=v1 -o jsonpath={.items..status.podIP})
 export V2_POD_IP=$(kubectl get pod -l app=httpbin,version=v2 -o jsonpath={.items..status.podIP})
 kubectl exec -it $SLEEP_POD -c istio-proxy -- sudo tcpdump -A -s 0 host $V1_POD_IP or host $V2_POD_IP
+
+```
+
+
+
+#### Ingress
+
+##### Ingress Gateway
+
+***创建 Istio Gateway：***
+
+```
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: httpbin-gateway
+spec:
+  selector:
+    istio: ingressgateway # use Istio default gateway implementation
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "httpbin.fuck.com"
+EOF
+
+```
+
+***为通过 Gateway 的入口流量配置路由：***
+
+```
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: httpbin
+spec:
+  hosts:
+  - "httpbin.fuck.com"
+  gateways:
+  - httpbin-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /status
+    - uri:
+        prefix: /delay
+    route:
+    - destination:
+        port:
+          number: 8000
+        host: httpbin
+EOF
+
+```
+
+```
+已为 httpbin 服务创建了虚拟服务配置，包含两个路由规则，允许流量流向路径 /status 和 /delay。
+gateways 列表规约了哪些请求允许通过 httpbin-gateway 网关。 所有其他外部请求均被拒绝并返回 404 响应。
+
+```
+
+**使用 *curl* 访问 *httpbin* 服务：**
+
+###### 正常：
+
+```
+curl -I -HHost:httpbin.fuck.com http://202.107.190.8:10385/status/200
+
+```
+
+打印
+
+```
+HTTP/1.1 200 OK
+server: istio-envoy
+date: Wed, 06 May 2020 03:39:37 GMT
+content-type: text/html; charset=utf-8
+access-control-allow-origin: *
+access-control-allow-credentials: true
+content-length: 0
+x-envoy-upstream-service-time: 29
+
+```
+
+*注意*
+
+```
+注意上文命令使用 -H 标识将 HTTP 头部参数 Host 设置为 “httpbin.example.com”。 该操作为必须操作，因为 ingress Gateway 已被配置用来处理 “httpbin.example.com” 的服务请求，而在测试环境中并没有为该主机绑定 DNS 而是简单直接地向 ingress IP 发送请求。
+
+```
+
+###### 非正常：
+
+访问其他没有被显式暴露的 URL 时，将看到 HTTP 404 错误：
+
+```
+curl -I -HHost:httpbin.fuck.com http://202.107.190.8:10385/fuck/
+
+```
+
+```
+HTTP/1.1 404 Not Found
+date: Wed, 06 May 2020 03:43:24 GMT
+server: istio-envoy
+transfer-encoding: chunked
+
+```
+
+###### 通过浏览器访问 ingress 服务
+
+```
+在浏览器中输入 httpbin 服务的 URL 不能获得有效的响应，因为无法像 curl 那样，将请求头部参数 Host 传给浏览器。在现实场景中，这并不是问题，因为你需要合理配置被请求的主机及可解析的 DNS，从而在 URL 中使用主机的域名，譬如： https://httpbin.example.com/status/200。
+
+```
+
+为了在简单的测试和演示中绕过这个问题，请在 `Gateway` 和 `VirtualService` 配置中使用通配符 `*`。譬如，修改 ingress 配置如下：
+
+```
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: httpbin-gateway
+spec:
+  selector:
+    istio: ingressgateway # use Istio default gateway implementation
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: httpbin
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - httpbin-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /headers
+    route:
+    - destination:
+        port:
+          number: 8000
+        host: httpbin
+EOF
+
+```
+
+###### 注：
+
+```
+此时，便可以在浏览器中输入包含 $INGRESS_HOST:$INGRESS_PORT 的 URL。譬如，输入http://$INGRESS_HOST:$INGRESS_PORT/headers，将显示浏览器发送的所有 headers 信息。
+
+```
+
+##### 安全网关（文件挂载）
+
+配置一个 ingress 网关以将 HTTP 服务暴露给外部流量、使用简单或双向 TLS 暴露安全 HTTPS 服务。
+
+###### 生成服务器证书和私钥[或者自己已有证书]
+
+使用 openssl 创建一个根证书和私钥以为您的服务所用的证书签名：
+
+```
+openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -subj '/O=fuck./CN=fuck.com' -keyout fuck.com.key -out fuck.com.crt
+
+```
+
+为 `httpbin.fuck.com` 创建一个证书和私钥：
+
+```
+openssl req -out httpbin.fuck.com.csr -newkey rsa:2048 -nodes -keyout httpbin.fuck.com.key -subj "/CN=httpbin.fuck.com/O=httpbin organization"
+
+```
+
+```
+openssl x509 -req -days 365 -CA fuck.com.crt -CAkey fuck.com.key -set_serial 0 -in httpbin.fuck.com.csr -out httpbin.fuck.com.crt
+
+```
+
+###### 基于文件挂载的方式配置 TLS ingress 网关
+
+配置一个使用 443 端口的 ingress 网关，以处理 HTTPS 流量。 首先使用证书和私钥创建一个 secret。该 secret 将被挂载为 /etc/istio/ingressgateway-certs 路径下的一个文件。 然后您可以创建一个网关定义，它将配置一个运行于端口 443 的服务。
+
+*创建一个 Kubernetes secret 以保存服务器的证书和私钥。使用 `kubectl` 在命名空间 `istio-system` 下创建 secret `istio-ingressgateway-certs`。Istio 网关将会自动加载该 secret。*
+
+```
+kubectl create -n istio-system secret tls istio-ingressgateway-certs --key httpbin.fuck.com.key --cert httpbin.fuck.com.crt
+
+```
+
+**注:**
+
+```
+默认情况下，istio-system 命名空间下的所有 pod 都能挂载这个 secret 并访问该私钥。可以将 ingress 网关部署到一个单独的命名空间中，并在那创建 secret，这样就只有这个 ingress 网关 pod 才能挂载它。
+
+```
+
+验证 `tls.crt` 和 `tls.key` 是否都已经挂载到 ingress 网关 pod 中：
+
+```
+kubectl exec -it -n istio-system $(kubectl -n istio-system get pods -l istio=ingressgateway -o jsonpath='{.items[0].metadata.name}') -- ls -al /etc/istio/ingressgateway-certs
+
+```
+
+###### 为 443 端口定义 `Gateway` 并设置 `server`。
+
+```
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: httpbin-gateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default ingress gateway
+  servers:
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      serverCertificate: /etc/istio/ingressgateway-certs/tls.crt
+      privateKey: /etc/istio/ingressgateway-certs/tls.key
+    hosts:
+    - "httpbin.fuck.com"
+EOF
+
+
+```
+
+###### 配置路由以让流量从 `Gateway` 进入
+
+```
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: httpbin
+spec:
+  hosts:
+  - "httpbin.fuck.com"
+  gateways:
+  - httpbin-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /status
+    - uri:
+        prefix: /delay
+    route:
+    - destination:
+        port:
+          number: 8000
+        host: httpbin
+EOF
+
+
+```
+
+###### 使用 *curl* 发送一个 `https` 请求到 `SECURE_INGRESS_PORT` 以通过 HTTPS 访问 `httpbin` 服务。`--resolve` 标志让 *curl* 在通过 TLS 访问网关 IP 时支持 SNI值 `httpbin.fuck.com`。 `--cacert` 选项则让 *curl* 使用您创建的证书来验证服务器。
+
+```
+通过发送请求到 /status/418 URL 路径，您可以很好地看到您的 httpbin 服务确实已被访问。 httpbin 服务将返回 418 I’m a Teapot 代码。
+
+```
+
+```
+curl -v -HHost:httpbin.fuck.com --resolve httpbin.fuck.com:10386:202.107.190.8 --cacert fuck.com.crt https://httpbin.fuck.com:10386/status/418
+
+```
+
+打印
+
+```
+* Added httpbin.fuck.com:10386:202.107.190.8 to DNS cache
+* About to connect() to httpbin.fuck.com port 10386 (#0)
+*   Trying 202.107.190.8...
+* Connected to httpbin.fuck.com (202.107.190.8) port 10386 (#0)
+* Initializing NSS with certpath: sql:/etc/pki/nssdb
+*   CAfile: fuck.com.crt
+  CApath: none
+* SSL connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+* Server certificate:
+*       subject: O=httpbin organization,CN=httpbin.fuck.com
+*       start date: May 06 06:45:16 2020 GMT
+*       expire date: May 06 06:45:16 2021 GMT
+*       common name: httpbin.fuck.com
+*       issuer: CN=fuck.com,O=fuck.
+> GET /status/418 HTTP/1.1
+> User-Agent: curl/7.29.0
+> Accept: */*
+> Host:httpbin.fuck.com
+> 
+< HTTP/1.1 418 Unknown
+< server: istio-envoy
+< date: Wed, 06 May 2020 07:27:35 GMT
+< x-more-info: http://tools.ietf.org/html/rfc2324
+< access-control-allow-origin: *
+< access-control-allow-credentials: true
+< content-length: 135
+< x-envoy-upstream-service-time: 8
+< 
+
+    -=[ teapot ]=-
+
+       _...._
+     .'  _ _ `.
+    | ."` ^ `". _,
+    \_;`"---"`|//
+      |       ;/
+      \_     _/
+        `"""`
+* Connection #0 to host httpbin.fuck.com left intact
+
+```
+
+在 *curl* 的输出中寻找 *Server certificate* 部分，尤其是找到与 *common name* 匹配的行：`common name: httpbin.example.com (matched)`。 输出中的 `SSL certificate verify ok` 这一行表示服务端的证书验证成功。 如果一切顺利，您还应该看到返回的状态 418，以及精美的茶壶图。
+
+##### 配置双向 TLS ingress 网关
+
+将网关的定义从上一节中扩展为支持外部客户端和网关之间的双向 TLS。
+
+###### 创建一个 Kubernetes `Secret` 以保存服务端将用来验证它的客户端的 CA 证书。使用 `kubectl` 在命名空间 `istio-system` 中创建 secret `istio-ingressgateway-ca-certs`。Istio 网关将会自动加载该 secret。
+
+```
+该 secret 必须在 istio-system 命名空间下，且名为 istio-ingressgateway-ca-certs，以与此任务中使用的 Istio 默认 ingress 网关的配置保持一致。
+
+```
+
+```
+kubectl create -n istio-system secret generic istio-ingressgateway-ca-certs --from-file=fuck.com.crt
+
+```
+
+###### 重新定义之前的 `Gateway`，修改 TLS 模式为 `MUTUAL`，并指定 `caCertificates`：
+
+```
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: httpbin-gateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default ingress gateway
+  servers:
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    tls:
+      mode: MUTUAL
+      serverCertificate: /etc/istio/ingressgateway-certs/tls.crt
+      privateKey: /etc/istio/ingressgateway-certs/tls.key
+      caCertificates: /etc/istio/ingressgateway-ca-certs/fuck.com.crt
+    hosts:
+    - "httpbin.fuck.com"
+EOF
+
+```
+
+###### 通过 HTTPS 访问 `httpbin` 服务：
+
+```
+curl -v -HHost:httpbin.fuck.com --resolve httpbin.fuck.com:10386:202.107.190.8 --cacert fuck.com.crt https://httpbin.fuck.com:10386/status/418
+
+```
+
+```
+网关定义传播需要时间，因此您可能会仍然得到 418 状态码。请稍后重新执行 curl 命令。
+这次您将得到一个报错，因为服务端拒绝接受未认证的请求。您需要传递 curl 客户端证书和私钥以将请求签名。
+
+```
+
+###### 重新用 *curl* 发送之前的请求，这次通过参数传递客户端证书（添加 `--cert` 选项）和您的私钥（`--key` 选项）：
+
+```
+curl -v -HHost:httpbin.fuck.com --resolve httpbin.fuck.com:10386:202.107.190.8 --cacert fuck.com.crt --cert ./httpbin.fuck.com.crt --key httpbin.fuck.com.key  https://httpbin.fuck.com:10386/status/418
+
+```
+
+打印
+
+```
+* Added httpbin.fuck.com:10386:202.107.190.8 to DNS cache
+* About to connect() to httpbin.fuck.com port 10386 (#0)
+*   Trying 202.107.190.8...
+* Connected to httpbin.fuck.com (202.107.190.8) port 10386 (#0)
+* Initializing NSS with certpath: sql:/etc/pki/nssdb
+*   CAfile: fuck.com.crt
+  CApath: none
+* NSS: client certificate from file
+*       subject: O=httpbin organization,CN=httpbin.fuck.com
+*       start date: May 06 06:45:16 2020 GMT
+*       expire date: May 06 06:45:16 2021 GMT
+*       common name: httpbin.fuck.com
+*       issuer: CN=fuck.com,O=fuck.
+* SSL connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+* Server certificate:
+*       subject: O=httpbin organization,CN=httpbin.fuck.com
+*       start date: May 06 06:45:16 2020 GMT
+*       expire date: May 06 06:45:16 2021 GMT
+*       common name: httpbin.fuck.com
+*       issuer: CN=fuck.com,O=fuck.
+> GET /status/418 HTTP/1.1
+> User-Agent: curl/7.29.0
+> Accept: */*
+> Host:httpbin.fuck.com
+> 
+< HTTP/1.1 418 Unknown
+< server: istio-envoy
+< date: Wed, 06 May 2020 09:18:14 GMT
+< x-more-info: http://tools.ietf.org/html/rfc2324
+< access-control-allow-origin: *
+< access-control-allow-credentials: true
+< content-length: 135
+< x-envoy-upstream-service-time: 8
+< 
+
+    -=[ teapot ]=-
+
+       _...._
+     .'  _ _ `.
+    | ."` ^ `". _,
+    \_;`"---"`|//
+      |       ;/
+      \_     _/
+        `"""`
+* Connection #0 to host httpbin.fuck.com left intact
+
+```
+
+##### 为多主机配置 TLS ingress 网关
+
+```
+为多个主机（httpbin.example.com 和 bookinfo.com）配置 ingress 网关。 Ingress 网关将向客户端提供与每个请求的服务器相对应的唯一证书。
+
+```
+
+```
+与之前不同，Istio 默认 ingress 网关无法立即使用，因为它仅被预配置为支持一个安全主机。 您需要先使用另一个 secret 配置并重新部署 ingress 网关服务器，然后才能使用它来处理第二台主机。
+
+```
+
+###### 为 `bookinfo.com` 创建服务器证书和私钥
+
+```
+openssl req -out bookinfo.com.csr -newkey rsa:2048 -nodes -keyout bookinfo.com.key -subj "/CN=bookinfo.com/O=bookinfo organization"
+
+```
+
+```
+openssl x509 -req -days 365 -CA fuck.com.crt -CAkey fuck.com.key -set_serial 0 -in bookinfo.com.csr -out bookinfo.com.crt
+
+```
+
+###### 使用新证书重新部署 `istio-ingressgateway`
+
+*创建一个新的 secret 以保存 `bookinfo.com` 的证书：*
+
+```
+kubectl create -n istio-system secret tls istio-ingressgateway-bookinfo-certs --key bookinfo.com.key --cert bookinfo.com.crt
+
+```
+
+*更新 `istio-ingressgateway` deployment 以挂载新创建的 secret。创建如下 `gateway-patch.json` 文件以更新 `istio-ingressgateway` deployment：*
+
+```
+cat > gateway-patch.json <<EOF
+[{
+  "op": "add",
+  "path": "/spec/template/spec/containers/0/volumeMounts/0",
+  "value": {
+    "mountPath": "/etc/istio/ingressgateway-bookinfo-certs",
+    "name": "ingressgateway-bookinfo-certs",
+    "readOnly": true
+  }
+},
+{
+  "op": "add",
+  "path": "/spec/template/spec/volumes/0",
+  "value": {
+  "name": "ingressgateway-bookinfo-certs",
+    "secret": {
+      "secretName": "istio-ingressgateway-bookinfo-certs",
+      "optional": true
+    }
+  }
+}]
+EOF
+
+```
+
+###### 使用以下命令应用 `istio-ingressgateway` deployment 更新：
+
+```
+kubectl -n istio-system patch --type=json deploy istio-ingressgateway -p "$(cat gateway-patch.json)"
+
+```
+
+###### 验证 `istio-ingressgateway` pod 已成功加载私钥和证书：
+
+```
+kubectl exec -it -n istio-system $(kubectl -n istio-system get pods -l istio=ingressgateway -o jsonpath='{.items[0].metadata.name}') -- ls -al /etc/istio/ingressgateway-bookinfo-certs
+
+
+```
+
+*`tls.crt` 和 `tls.key` 应该出现在文件夹之中。*
+
+###### 配置 `bookinfo.com` 主机的流量
+
+```
+kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
+
+```
+
+###### 为 `bookinfo.com` 定义网关：
+
+```
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: bookinfo-gateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default ingress gateway
+  servers:
+  - port:
+      number: 443
+      name: https-bookinfo
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      serverCertificate: /etc/istio/ingressgateway-bookinfo-certs/tls.crt
+      privateKey: /etc/istio/ingressgateway-bookinfo-certs/tls.key
+    hosts:
+    - "bookinfo.com"
+EOF
+
+```
+
+###### 配置 `bookinfo.com` 的路由。定义类似 `samples/bookinfo/networking/bookinfo-gateway.yaml` 的 `VirtualService`：
+
+```
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: bookinfo
+spec:
+  hosts:
+  - "bookinfo.com"
+  gateways:
+  - bookinfo-gateway
+  http:
+  - match:
+    - uri:
+        exact: /productpage
+    - uri:
+        exact: /login
+    - uri:
+        exact: /logout
+    - uri:
+        prefix: /api/v1/products
+    route:
+    - destination:
+        host: productpage
+        port:
+          number: 9080
+EOF
+
+
+```
+
+###### 发送到 *Bookinfo* `productpage` 的请求：
+
+```
+curl -o /dev/null -s -v -w "%{http_code}\n" -HHost:bookinfo.com --resolve bookinfo.com:10386:202.107.190.8 --cacert fuck.com.crt -HHost:bookinfo.com https://bookinfo.com:10386/productpage
+
+```
+
+###### 验证 `httbin.example.com` 像之前一样可访问
+
+```
+curl -HHost:httpbin.fuck.com --resolve httpbin.fuck.com:10386:202.107.190.8 --cacert fuck.com.crt --cert ./httpbin.fuck.com.crt --key httpbin.fuck.com.key https://httpbin.fuck.com:10386/status/418
+
+```
+
+打印
+
+```
+    -=[ teapot ]=-
+
+       _...._
+     .'  _ _ `.
+    | ."` ^ `". _,
+    \_;`"---"`|//
+      |       ;/
+      \_     _/
+        `"""`
+
+```
+
+##### 无 TLS 终止的 Ingress Gateway
+
+*安全网关说明了如何为 HTTP 服务配置 HTTPS 访问入口。 而本示例将说明如何为 HTTPS 服务配置 HTTPS 访问入口，即配置 Ingress Gateway 以执行 SNI 透传，而不是对传入请求进行 TLS 终止。*
+
+*本任务中的 HTTPS 示例服务是一个简单的 NGINX 服务。 在接下来的步骤中，你会先在你的 Kubernetes 集群中创建一个 NGINX 服务。 然后，通过网关给这个服务配置一个域名是 nginx.example.com 的访问入口。*
+
+###### 生成客户端和服务端的证书和密钥
+
+创建根证书和私钥来为您的服务签名证书：
+
+```
+openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -subj '/O=example Inc./CN=example.com' -keyout example.com.key -out example.com.crt
+
+```
+
+为 `nginx.example.com` 创建证书和私钥：
+
+```
+openssl req -out nginx.example.com.csr -newkey rsa:2048 -nodes -keyout nginx.example.com.key -subj "/CN=nginx.example.com/O=some organization"
+
+```
+
+```
+openssl x509 -req -days 365 -CA fuck.com.crt -CAkey fuck.com.key -set_serial 0 -in nginx.example.com.csr -out nginx.example.com.crt
+
+```
+
+###### 部署一个 NGINX 服务
+
+创建一个 Kubernetes 的 Secret 资源来保存服务的证书：
+
+```
+kubectl create secret tls nginx-server-certs --key nginx.example.com.key --cert nginx.example.com.crt
+
+```
+
+为 NGINX 服务创建一个配置文件：
+
+```
+cat <<EOF > ./nginx.conf
+events {
+}
+
+http {
+  log_format main '$remote_addr - $remote_user [$time_local]  $status '
+  '"$request" $body_bytes_sent "$http_referer" '
+  '"$http_user_agent" "$http_x_forwarded_for"';
+  access_log /var/log/nginx/access.log main;
+  error_log  /var/log/nginx/error.log;
+
+  server {
+    listen 443 ssl;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    server_name nginx.example.com;
+    ssl_certificate /etc/nginx-server-certs/tls.crt;
+    ssl_certificate_key /etc/nginx-server-certs/tls.key;
+  }
+}
+EOF
+
+
+```
+
+创建一个 Kubernetes 的 ConfigMap 资源来保存 NGINX 服务的配置：
+
+```
+kubectl create configmap nginx-configmap --from-file=nginx.conf=./nginx.conf
+
+```
+
+部署 NGINX 服务:
+
+```
+cat <<EOF | istioctl kube-inject -f - | kubectl apply -f -
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-nginx
+  labels:
+    run: my-nginx
+spec:
+  ports:
+  - port: 443
+    protocol: TCP
+  selector:
+    run: my-nginx
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-nginx
+spec:
+  selector:
+    matchLabels:
+      run: my-nginx
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: my-nginx
+    spec:
+      containers:
+      - name: my-nginx
+        image: nginx
+        ports:
+        - containerPort: 443
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx
+          readOnly: true
+        - name: nginx-server-certs
+          mountPath: /etc/nginx-server-certs
+          readOnly: true
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: nginx-configmap
+      - name: nginx-server-certs
+        secret:
+          secretName: nginx-server-certs
+EOF
+
+```
+
+要测试 NGINX 服务是否已成功部署，需要从其 sidecar 代理发送请求，并忽略检查服务端的证书（使用 curl 的 -k 选项）。确保正确打印服务端的证书，即 `common name` 等于 `nginx.example.com`。
+
+```
+kubectl exec -it $(kubectl get pod  -l run=my-nginx -o jsonpath={.items..metadata.name}) -c istio-proxy -- curl -v -k --resolve nginx.example.com:443:127.0.0.1 https://nginx.example.com
+
+```
+
+###### 配置 ingress gateway
+
+定义一个 server 部分的端口为 443 的 Gateway。 注意，PASSTHROUGH tls mode 指示 gateway 按原样通过入口流量，而不终止 TLS。
+
+```
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: mygateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default ingress gateway
+  servers:
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    tls:
+      mode: PASSTHROUGH
+    hosts:
+    - nginx.example.com
+EOF
+
+```
+
+配置通过 `Gateway` 进入的流量的路由：
+
+```
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: nginx
+spec:
+  hosts:
+  - nginx.example.com
+  gateways:
+  - mygateway
+  tls:
+  - match:
+    - port: 443
+      sni_hosts:
+      - nginx.example.com
+    route:
+    - destination:
+        host: my-nginx
+        port:
+          number: 443
+EOF
+
+```
+
+根据确定 ingress IP 和端口中的指令来定义环境变量 SECURE_INGRESS_PORT 和 INGRESS_HOST。
+
+从集群外访问 NGINX 服务。注意，服务端返回了正确的证书，并且该证书已成功验证（输出了 *SSL certificate verify ok* ）。
+
+```
+curl -v --resolve nginx.example.com:10386:202.107.190.8 --cacert fuck.com.crt https://nginx.example.com:10386
+
+```
+
+##### 使用 Cert-Manager 加密 Kubernetes Ingress
+
+###### 准备工作
+
+确认已经启用支持 Kubernetes Ingress 和 SDS 的 ingress gateway。
+
+```
+istioctl manifest apply \
+  --set values.gateways.istio-ingressgateway.sds.enabled=true \
+  --set values.global.k8sIngress.enabled=true \
+  --set values.global.k8sIngress.enableHttps=true \
+  --set values.global.k8sIngress.gatewayName=ingressgateway
+
+```
+
+安装cert-manager
+
+```
+kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.15.0/cert-manager.yaml
+
+```
+
+```
+kubectl create clusterrolebinding cluster-admin-binding \
+  --clusterrole=cluster-admin \
+  --user=$(gcloud config get-value core/account)
+
+```
+
+验证
+
+```
+kubectl get pods --namespace cert-manager
+
+```
+
+
+
+*在 Istio 中使用 Let’s Encrypt 签发 TLS 证书为 Kubernetes Ingress controller 提供安全加固的过程。*
+
+*将从全新的 Istio 安装开始，创建示例服务，使用 Kubernetes Ingress 把它开放出去，并使用 cert-manager（与 Istio 捆绑在一起）管理 TLS 证书的签发和续订来确保它的安全，这个证书之后会给 Istio ingress gateway 使用，并根据需要通过 Secrets Discovery Service (SDS) 提供 hot-swapped 功能。*
+
+###### 配置 DNS 域名和 gateway
+
+记录一下 `istio-ingressgateway` 服务的外部 IP：
+
+```
+kubectl -n istio-system get service istio-ingressgateway
+
+```
+
+对您的 DNS 进行设置，给 `istio-ingressgateway` 服务的外部 IP 分配一个合适的域名。为了能让例子正常执行，您需要一个真正的域名，用于获取 TLS 证书。让我们把域名保存为环境变量，以便于后面的使用：
+
+```
+INGRESS_DOMAIN=mysubdomain.mydomain.edu
+
+```
+
+Istio 安装中包含了一个自动生成的 gateway ，用于提供 Kubernetes Ingress 定义的路由服务。默认情况下，它不会使用 SDS，所以您需要对其进行修改，使其能通过 SDS 来为 istio-ingressgateway 签发 TLS 证书：
+
+```
+kubectl -n istio-system edit gateway
+
+```
+
+```
+旧版bak如下
+
+```
+
+```
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"networking.istio.io/v1alpha3","kind":"Gateway","metadata":{"annotations":{},"labels":{"operator.istio.io/component":"IngressGateways","operator.istio.io/managed":"Reconcile","operator.istio.io/version":"1.5.1","release":"istio"},"name":"ingressgateway","namespace":"istio-system"},"spec":{"selector":{"istio":"ingressgateway"},"servers":[{"hosts":["*"],"port":{"name":"http","number":80,"protocol":"HTTP"}}]}}
+  creationTimestamp: "2020-03-30T06:25:44Z"
+  generation: 1
+  labels:
+    operator.istio.io/component: IngressGateways
+    operator.istio.io/managed: Reconcile
+    operator.istio.io/version: 1.5.1
+    release: istio
+  name: ingressgateway
+  namespace: istio-system
+  resourceVersion: "45373421"
+  selfLink: /apis/networking.istio.io/v1beta1/namespaces/istio-system/gateways/ingressgateway
+  uid: 4db0fc7c-52b2-4269-a445-014035c48710
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - hosts:
+    - '*'
+    port:
+      name: http
+      number: 80
+      protocol: HTTP
+
+```
+
+修改 https-default 端口对应的 tls 内容：
+
+```
+kubectl -n istio-system \
+  patch gateway istio-autogenerated-k8s-ingress --type=json \
+  -p='[{"op": "replace", "path": "/spec/servers/1/tls", "value": {"credentialName": "ingress-cert", "mode": "SIMPLE", "privateKey": "sds", "serverCertificate": "sds"}}]'
+
+```
+
+###### 部署演示应用
+
+使用一个简单的 `helloworld` 应用来进行演示。下面的命令会为示例应用创建 `Deployment` 和 `Service`，并使用 Istio Ingress 开放服务。
+
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Service
+metadata:
+  name: helloworld
+  labels:
+    app: helloworld
+spec:
+  ports:
+  - port: 5000
+    name: http
+  selector:
+    app: helloworld
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: helloworld
+spec:
+  template:
+    metadata:
+      labels:
+        app: helloworld
+    spec:
+      containers:
+      - name: helloworld
+        image: istio/examples-helloworld-v1
+        resources:
+          requests:
+            cpu: "100m"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: istio
+  name: helloworld-ingress
+spec:
+  rules:
+    - host: "$INGRESS_DOMAIN"
+      http:
+        paths:
+          - path: /hello
+            backend:
+              serviceName: helloworld
+              servicePort: 5000
+---
+EOF
+
+```
+
+通过 HTTP 访问演示应用：
+
+```
+curl http://$INGRESS_DOMAIN/hello
+
+```
+
+因为没有配置任何的 TLS 证书，所以现在还不能使用 HTTPS 访问，下面就开始进行配置。
+
+###### 使用 cert-manager 获取 Let’s Encrypt 签发的证书
+
+*目前，您的 Istio 中应该已经启动了 cert-manager，并带有两个 ClusterIssuer 对象（分别对应 Let’s Encrypt 的生产和测试 ACME-endpoints）。这个例子中使用测试 ACME-endpoint（将 letsencrypt-staging 替换为 letsencrypt 就能获得浏览器信任的证书）。*
+
+为了用 cert-manager 进行证书的签发和管理，需要创建一个 Certificate 对象：
+
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: ingress-cert
+  namespace: istio-system
+spec:
+  secretName: ingress-cert
+  issuerRef:
+    name: letsencrypt-staging
+    kind: ClusterIssuer
+  commonName: $INGRESS_DOMAIN
+  dnsNames:
+  - $INGRESS_DOMAIN
+  acme:
+    config:
+    - http01:
+        ingressClass: istio
+      domains:
+      - $INGRESS_DOMAIN
+---
+EOF
+
+```
+
+注意这里的 secretName 要匹配前面配置 gateway 时的 credentialName 字段值。Certificate 对象会被 cert-manager 处理，最终会签发新证书。为了看到这个过程我们可以查询 Certificate 对象的状态：
+
+```
+kubectl -n istio-system describe certificate ingress-cert
+
+```
+
+该服务也应通过 HTTPS 访问了：
+
+```
+curl --insecure https://$INGRESS_DOMAIN/hello
+
+```
+
+**从测试到生产**
+
+现在换成生产 `letsencrypt`。首先，我们重新申请一下证书。
+
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: ingress-cert
+  namespace: istio-system
+spec:
+  secretName: ingress-cert
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
+  commonName: $INGRESS_DOMAIN
+  dnsNames:
+  - $INGRESS_DOMAIN
+  acme:
+    config:
+    - http01:
+        ingressClass: istio
+      domains:
+      - $INGRESS_DOMAIN
+---
+EOF
+
+```
+
+删除 secret 来强制 cert-manager 从生产 ACME-endpoints 请求新证书：
+
+```
+kubectl delete secret -n istio-system ingress-cert
+
+```
+
+查看证书是否成功签发了：
+
+```
+watch -n1 kubectl describe cert ingress-cert -n istio-system
+
+```
+
+打印
+
+```
+Normal  CertIssued     13m   cert-manager  Certificate issued successfully
+
+```
+
+
+
+#### Engress
+
+##### 访问外部服务
+
+```
+由于默认情况下，来自 Istio-enable Pod 的所有出站流量都会重定向到其 Sidecar 代理，群集外部 URL 的可访问性取决于代理的配置。默认情况下，Istio 将 Envoy 代理配置为允许传递未知服务的请求。尽管这为入门 Istio 带来了方便，但是，通常情况下，配置更严格的控制是更可取的。
+
+三种访问外部服务的方法：
+	允许 Envoy 代理将请求传递到未在网格内配置过的服务。
+	配置 service entries 以提供对外部服务的受控访问。
+	对于特定范围的 IP，完全绕过 Envoy 代理。
+
+```
+
+###### 部署 sleep 这个示例应用，用作发送请求的测试源。
+
+```
+kubectl apply -f samples/sleep/sleep.yaml	
+
+```
+
+*Istio 有一个安装选项， `global.outboundTrafficPolicy.mode`，它配置 sidecar 对外部服务（那些没有在 Istio 的内部服务注册中定义的服务）的处理方式。如果这个选项设置为 `ALLOW_ANY`，Istio 代理允许调用未知的服务。如果这个选项设置为 `REGISTRY_ONLY`，那么 Istio 代理会阻止任何没有在网格中定义的 HTTP 服务或 service entry 的主机。`ALLOW_ANY` 是默认值，不控制对外部服务的访问。*
+
+要查看这种方法的实际效果，你需要确保 Istio 的安装配置了 `global.outboundTrafficPolicy.mode` 选项为 `ALLOW_ANY`。它在默认情况下是开启的，除非你在安装 Istio 时显式地将它设置为 `REGISTRY_ONLY`。
+
+```
+kubectl get configmap istio -n istio-system -o yaml | grep -o "mode: ALLOW_ANY"
+
+```
+
+打印
+
+```
+mode: ALLOW_ANY
+
+```
+
+如果你显式地设置了 `REGISTRY_ONLY` 模式，可以用以下的命令来改变它：
+
+```
+kubectl get configmap istio -n istio-system -o yaml | sed 's/mode: REGISTRY_ONLY/mode: ALLOW_ANY/g' | kubectl replace -n istio-system -f -
+
+```
+
+###### 从 `SOURCE_POD` 向外部 HTTPS 服务发出两个请求，确保能够得到状态码为 `200` 的响应
+
+```
+kubectl exec -it sleep-6c7875499f-x48w2 -c sleep -- curl -I https://www.baidu.com | grep  "HTTP/"; kubectl exec -it sleep-6c7875499f-x48w2 -c sleep -- curl -I https://www.sina.com | grep "HTTP/"
+
+```
+
+打印
+
+```
+HTTP/1.1 200 OK
+HTTP/2 301 
+
+```
+
+成功地从网格中发送了 egress 流量。
+
+这种访问外部服务的简单方法有一个缺点，即丢失了对外部服务流量的 Istio 监控和控制；比如，外部服务的调用没有记录到 Mixer 的日志中。下一节将介绍如何监控和控制网格对外部服务的访问。
+
+##### 控制对外部服务的访问
+
+使用 Istio ServiceEntry 配置，你可以从 Istio 集群中访问任何公开的服务。
+
+本节将向你展示如何在不丢失 Istio 的流量监控和控制特性的情况下，配置对外部 HTTP 服务(httpbin.org) 和外部 HTTPS 服务(www.baidu.com) 的访问。
+
+###### 开启mixer
+
+```
+istioctl manifest apply --set addonComponents.grafana.enabled=true --set addonComponents.mixer.enabled=true
+
+```
+
+
+
+###### 更改为默认的封锁策略
+
+如何控制对外部服务的访问，需要将 `global.outboundTrafficPolicy.mode` 选项，从 `ALLOW_ANY`模式 改为 `REGISTRY_ONLY` 模式。
+
+执行以下命令来将 `global.outboundTrafficPolicy.mode` 选项改为 `REGISTRY_ONLY`：
+
+```
+kubectl get configmap istio -n istio-system -o yaml | sed 's/mode: ALLOW_ANY/mode: REGISTRY_ONLY/g' | kubectl replace -n istio-system -f -
+
+```
+
+从 `SOURCE_POD` 向外部 HTTPS 服务发出几个请求，验证它们现在是否被阻止：
+
+```
+kubectl exec -it sleep-6c7875499f-x48w2 -c sleep -- curl -I https://www.baidu.com | grep  "HTTP/"; kubectl exec -it sleep-6c7875499f-x48w2 -c sleep -- curl -I https://www.sina.com | grep "HTTP/"
+
+```
+
+打印
+
+```
+command terminated with exit code 35
+command terminated with exit code 35
+
+```
+
+###### 创建一个 `ServiceEntry`，以允许访问一个外部的 HTTP 服务：
+
+```
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: httpbin-ext
+spec:
+  hosts:
+  - httpbin.org
+  ports:
+  - number: 80
+    name: http
+    protocol: HTTP
+  resolution: DNS
+  location: MESH_EXTERNAL
+EOF
+
+```
+
+从 `SOURCE_POD` 向外部的 HTTP 服务发出一个请求：
+
+```
+kubectl exec -it sleep-6c7875499f-pwvls -c sleep -- curl http://httpbin.org/headers
+
+```
+
+打印
+
+```
+{
+  "headers": {
+    "Accept": "*/*", 
+    "Content-Length": "0", 
+    "Host": "httpbin.org", 
+    "User-Agent": "curl/7.64.0", 
+    "X-Amzn-Trace-Id": "Root=1-5eb4fdce-454fa3c12128dd0be3ddf78a", 
+    "X-B3-Sampled": "0", 
+    "X-B3-Spanid": "0a566ae796c597ad", 
+    "X-B3-Traceid": "b9a9866fe891f0da0a566ae796c597ad", 
+    "X-Envoy-Decorator-Operation": "httpbin.org:80/*", 
+    "X-Envoy-Peer-Metadata": "Ch4KDElOU1RBTkNFX0lQUxIOGgwxMC4yMC4xNi4xODMKxAEKBkxBQkVMUxK5ASq2AQoOCgNhcHASBxoFc2xlZXAKIQoRcG9kLXRlbXBsYXRlLWhhc2gSDBoKNmM3ODc1NDk5ZgokChlzZWN1cml0eS5pc3Rpby5pby90bHNNb2RlEgcaBWlzdGlvCioKH3NlcnZpY2UuaXN0aW8uaW8vY2Fub25pY2FsLW5hbWUSBxoFc2xlZXAKLwojc2VydmljZS5pc3Rpby5pby9jYW5vbmljYWwtcmV2aXNpb24SCBoGbGF0ZXN0ChoKB01FU0hfSUQSDxoNY2x1c3Rlci5sb2NhbAogCgROQU1FEhgaFnNsZWVwLTZjNzg3NTQ5OWYteDQ4dzIKFgoJTkFNRVNQQUNFEgkaB2RlZmF1bHQKSQoFT1dORVISQBo+a3ViZXJuZXRlczovL2FwaXMvYXBwcy92MS9uYW1lc3BhY2VzL2RlZmF1bHQvZGVwbG95bWVudHMvc2xlZXAKGgoPU0VSVklDRV9BQ0NPVU5UEgcaBXNsZWVwChgKDVdPUktMT0FEX05BTUUSBxoFc2xlZXA=", 
+    "X-Envoy-Peer-Metadata-Id": "sidecar~10.20.16.183~sleep-6c7875499f-x48w2.default~default.svc.cluster.local"
+  }
+}
+
+```
+
+```
+注意由 Istio sidecar 代理添加的 headers: X-Envoy-Decorator-Operation。
+
+```
+
+检查 `SOURCE_POD` 的 sidecar 代理的日志:
+
+```
+kubectl logs sleep-6c7875499f-pwvls -c istio-proxy | tail
+
+```
+
+
+
+
+
+
+
+```
+kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: google
+spec:
+  hosts:
+  - www.baidu.com
+  ports:
+  - number: 443
+    name: https
+    protocol: HTTPS
+  resolution: DNS
+  location: MESH_EXTERNAL
+EOF
+
+
 ```
 
